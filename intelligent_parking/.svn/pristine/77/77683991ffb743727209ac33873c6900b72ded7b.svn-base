@@ -1,0 +1,123 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "checkin-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+    <h3 class="title">录入巡检记录</h3>
+    <form method="POST" id="checkin-form" action="/mobile/checkrecord">
+        <div data-role="controlgroup">
+            <label for="car_img">车辆照片:</label>
+            <input type="hidden" name="car_img" value="" id="car_img"/>
+            <a href="#" id="take-img"><img src="/static/mobile/images/take_img.png" /></a>
+        </div>
+        <div data-role="controlgroup">
+            <lable for="street">路段:</label>
+        <select name="street" id="street" class="select">
+            <option value="">全部</option>
+            {% for s in streets %}
+            <option value="{{ s.Value }}">{{ s.DisplayText }}</option>
+            {% endfor%}
+        </select>
+    </div>
+ <div data-role="controlgroup">
+    <lable for="costerid">班组:</label>
+<select name="costerid" id="costerid" class="select">
+    <option value="">全部</option>
+    {% for s in shifts %}
+    <option value="{{ s.Value }}">{{ s.DisplayText }}</option>
+    {% endfor%}
+</select>
+    </div>
+    <div data-role="controlgroup">
+        <lable for="costerid">当值人员:</label>
+    <select name="costerid" id="costerid" class="select">
+        <option value="">全部</option>
+        {% for u in users %}
+        <option value="{{ u.Value }}">{{ u.DisplayText }}</option>
+        {% endfor%}
+    </select>
+</div>
+<div data-role="controlgroup">
+    <lable for="parking_code">车位:</label>
+<select name="parking_code" id="parking_code" class="select">
+    <option value="">全部</option>
+    {% for p in parkings %}
+    <option value="{{ p.Value }}">{{ p.DisplayText }}</option>
+    {% endfor%}
+</select>
+    </div>
+    <div data-role="controlgroup">
+        <lable for="car_no">车牌号:</label>
+    <input type="text" name="car_no" value="{{car_no}}" id="car_no"/> <br />
+</div>
+<div data-role="fieldcontain">
+    <label for="result">备注:</label>
+    <textarea cols="40" rows="8" name="result" id="result"></textarea>
+</div>
+<br />
+<input type="submit" value="保存" />
+</form>
+</div>
+<script type="text/javascript">
+    $("#{{page_id}}").on("pageinit", function() {
+        $('#car_no').keyup(function() {
+            this.value = this.value.toUpperCase();
+        });    
+
+        /*$("#checkin-form").submit(function(e) {
+            $.mobile.loading("show");
+            e.preventDefault();
+            var url = $(this).attr("action");
+            var post_data = {
+                car_no :  $("#carfirst").val + $("#carsecond").val() + " " + $("#car_no").val()
+                ,car_img : $("#car_img").val()
+                ,street: $("#street").val()
+                ,region: $("#region").val()
+                ,shift: $("#shift").val()
+                ,costerid: $("#costerid").val()
+                ,result: $("#result").val()
+                ,parking_code: $("#parking_code").val()
+            };
+            $.post(url, post_data, function(data) {
+                $.mobile.loading("hide");
+                if (data.error == 0) {
+                    BT_printer.print(data.print_content, function() {
+                    $.mobile.changePage("/mobile/index");
+                    }, utils.showMessageBox);
+                } else {
+                    utils.showMessageBox(data.errorMsg);
+
+                } 
+            }, "json");
+        });*/
+
+        $("#take-img").click(function() {
+            var opts = {
+                quality : 75,
+                destinationType : Camera.DestinationType.DATA_URL,
+                sourceType : Camera.PictureSourceType.CAMERA,
+                allowEdit : false,
+                encodingType: Camera.EncodingType.JPEG,
+                targetWidth: 600,
+                targetHeight: 600,
+                saveToPhotoAlbum: false
+            };
+
+            navigator.camera.getPicture(onGetPictureDone, onGetPictureError, opts);
+            return false;
+        });
+
+        function onGetPictureDone(img_data)
+        {
+            $("#car_img").val(img_data);
+            $("#take-img img").attr("src", "data:image/jpeg;base64,"+img_data);
+        }
+
+        function onGetPictureError(data)
+        {
+            utils.showMessageBox(data);
+        }
+    });
+</script>
+{% endblock %}

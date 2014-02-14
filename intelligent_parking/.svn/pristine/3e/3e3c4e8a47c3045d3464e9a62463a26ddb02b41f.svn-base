@@ -1,0 +1,116 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+  $(document).ready(function () {
+        $('#codedata_grid').jtable({
+            title: '数据字典',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetCodeData4jtable'
+                ,deleteAction: '/pc/DeleteCodeData4jtable'
+                ,updateAction: '/pc/UpdateCodeData4jtable'
+                ,createAction: '/pc/CreateCodeData4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_category: {
+                    title: '字典类型'
+                    ,width:'8%'
+                    ,options:{%if not datas %}[]{% else %}{{datas}}{% endif %}
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_code: {
+                    title: '代码'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_value: {
+                    title: '值'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_index: {
+                    title: '排序号'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_remark: {
+                    title: '备注'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#btnQuery').click(function (event) {
+             var filter =  $('#filter').val();
+        	 $('#codedata_grid').jtable('load', {
+                 filter: filter
+             });
+        });
+
+        $('#codedata_grid').jtable('load', {
+            filter:''
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="codedata_grid">
+</div>
+{% endblock %}

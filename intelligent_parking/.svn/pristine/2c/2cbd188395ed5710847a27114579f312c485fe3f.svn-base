@@ -1,0 +1,14 @@
+停车位收费日报表（收费员）
+
+日期:{{ today }}
+收费员:{{ coster_name }}
+路段:{{ street_name }}
+收费车次:{{ car_count }}
+收费金额:{{ cost_count }}
+交班未驶离车次:{{ stay_car }}
+免费车次:{{ free_car_count }}
+免费时长:{{ free_car_time_count }}
+
+
+
+

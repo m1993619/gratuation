@@ -1,0 +1,282 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+  $(document).ready(function () {
+        $('#parking_grid').jtable({
+            title: '车位列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetParking4jtable'
+                ,deleteAction: '/pc/DeleteParking4jtable'
+                ,updateAction: '/pc/UpdateParking4jtable'
+                ,createAction: '/pc/CreateParking4jtable'
+            }
+            ,fields: {
+                record: {
+                    title: '',
+                    width: '2%',
+                    sorting: false,
+                    edit: false,
+                    create: false,
+                    display: function (data) {
+                        //Create an image that will be used to open child table
+                        var $img = $('<img src="/static/content/images/list_metro.png" title="操作日志" />');
+                        //Open child table when user clicks the image
+                        $img.click(function () {
+                            $('#parking_grid').jtable('openChildTable',
+                                $img.closest('tr'),{ //Parent row
+                                    title: '操作日志'
+                                    ,actions: {
+                                        listAction: '/pc/GetParkingRecordDetails4jtable?record_id=' + (data.record.f_parking_record_id?data.record.f_parking_record_id:-1),
+                                    }
+                                    ,fields: {
+                                        f_id: {
+                                            key: true
+                                            ,title:"序号"
+                                            ,width:'3%'
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_image:{
+                                            title:"现场图片"
+                                            ,display:function(data){
+                                                if(data.record){
+                                                return '<a href="data:image/jpeg;charset=utf-8;base64,' + data.record.f_image + '" target="_blank"><image src="data:image/jpeg;charset=utf-8;base64,' + data.record.f_image + '" width="100" height="100" border="0" /></a>' 
+                                                } else {
+                                                    return "<span>空</span>"
+                                                }
+                                            }
+                                        }
+                                        ,f_parking_code: {
+                                            title: '车位编号'
+                                            ,width:'8%'
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                            
+                                        ,f_key: {
+                                            title: '凭证号'
+                                            ,width:'8%'
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_car_no: {
+                                            title: '车牌号'
+                                            ,width:'10%'
+                                            ,sorting:false
+                                            ,inputClass: 'jtable-input-text validate[required]'
+                                        }
+                                        ,f_car_type: {
+                                            title: '车辆类别'
+                                            ,width:'8%'
+                                            ,options:["","轿车","货车","执勤车辆","其他"]          
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_parking_stamp: {
+                                            title: '停车时间'
+                                            ,width:'8%'
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_leave_stamp: {
+                                            title: '离开时间'
+                                            ,width:'8%'
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_cost: {
+                                            title: '应缴费用'
+                                            ,width:'8%'
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_act_cost: {
+                                            title: '实收费用'
+                                            ,width:'8%'
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_cost_type: {
+                                            title: '缴费类型'
+                                            ,width:'8%'
+                                            ,options:["","正常缴费","包月","免费","逃逸"]         
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_reason: {
+                                            title: '未缴费原因'
+                                            ,width:'8%'
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_shift_id: {
+                                            title: '收费班组'
+                                            ,width:'8%'
+                                            ,options: {% if not shifts%} [] {% else %} {{shifts}} {% endif %}        
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_coster_id: {
+                                            title: '收费人'
+                                            ,width:'8%'
+                                            ,options: {% if not users%} [] {% else %} {{users}} {% endif %}    
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                        ,f_creater_id: {
+                                            title: '登记人'
+                                            ,width:'8%' 
+                                            ,options: {% if not users%} [] {% else %} {{users}} {% endif %}    
+                                            ,inputClass: 'jtable-input-text'
+                                        }
+                                    }
+                                }, function (data) { //opened handler
+                                    data.childTable.jtable('load');
+                                });
+                        });
+                        //Return image to show on the person row
+                        return $img;
+                    }
+                }
+                ,f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,list:false
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_code: {
+                    title: '车位编号'
+                    ,width:'8%'
+                    ,create:true
+                    ,edit:false
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_name: {
+                    title: '车位名称'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_type: {
+                    title: '车位类型'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options:["普通车位","其他"]
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_street_id: {
+                    title: '所属街道'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options:{% if not streets %} [] {% else %} {{streets}} {% endif %}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_region_id: {
+                    title: '所属区域'
+                    ,width:'8%'
+                    ,options:{% if not regions %} [] {% else %} {{regions}} {% endif %}
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_is_free:{
+                   title:'是否免费'
+                   ,type:'checkbox'
+                   ,values:{0:'否',1:'是'}
+                   ,width:'5%' 
+                   ,sorting:false
+                   ,display:function(data){
+                       return '<input type="checkbox" ' + ((data.record.f_is_free || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
+                   }
+                }
+                ,f_is_private:{
+                   title:'是否承包'
+                   ,type:'checkbox'
+                   ,values:{0:'否',1:'是'}
+                   ,width:'5%' 
+                   ,sorting:false
+                           ,display:function(data){
+                               return '<input type="checkbox" ' + ((data.record.f_is_free || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
+                   }
+                }
+                ,f_has_device:{
+                   title:'是否安装地磁'
+                   ,type:'checkbox'
+                   ,values:{0:'否',1:'是'}
+                   ,width:'5%' 
+                   ,sorting:false
+                           ,display:function(data){
+                               return '<input type="checkbox" ' + ((data.record.f_is_free || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
+                   }
+                }
+                ,f_state:{
+                   title:'车位状态'
+                   ,type:'checkbox'
+                   ,values:{0:'无车',1:'有车'}
+                   ,width:'5%'
+                   ,create:false
+                   ,edit:false        
+                   ,sorting:false
+                           ,display:function(data){
+                               return '<input type="checkbox" ' + ((data.record.f_state || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
+                   }
+                }
+                ,f_remark: {
+                    title:"备注"
+                    ,type:"textarea"
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#btnQuery').click(function (event) {
+             var filter =  $('#filter').val();
+             $('#parking_grid').jtable('load', {
+                 filter: filter
+             });
+        });
+
+        $('#parking_grid').jtable('load', {
+            filter:''
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="parking_grid">
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+@charset "utf-8";
+#content img{ margin:5px 0px 5px 15px; width:70px; height:70px;}
+
+.progress-bar {
+	width: 90%;
+        margin: 50px auto;
+}
+
+.progress-bar > .load-bar {
+	width: 100%;
+	height: 25px;
+	border-radius: 30px;
+	background: #dcdbd7;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.8),  inset 0 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar > .load-bar > .load-bar-inner {
+	height: 99%;
+	width: 0%;
+	border-radius: inherit;
+	background: #c2d7ac;
+	background: -webkit-linear-gradient(#e0f6c8, #98ad84);
+	box-shadow:
+ inset 0 1px 0 rgba(255, 255, 255, 1),  0 1px 5px rgba(0, 0, 0, 0.3),  0 4px 5px rgba(0, 0, 0, 0.3);
+
+}
+
+.progress-bar p {
+    font-size: 13px;
+    line-height: 25px;
+    text-align: center;
+}
+

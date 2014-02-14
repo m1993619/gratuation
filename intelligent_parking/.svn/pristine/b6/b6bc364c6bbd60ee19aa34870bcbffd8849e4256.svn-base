@@ -1,0 +1,49 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "queryparking-page" %}
+{% set parking_image = "/static/content/images/no-parking.gif" %}
+{% set no_parking_image = "/static/content/images/no-parking.png" %}
+
+{% block content %}
+<div data-role="content" id="content">
+      <ul data-role="listview" data-split-icon="gear" data-split-theme="d" data-filter="true">
+      {% for parking in parkings %}
+      {% set src_image = "/mobile/image/" + (parking.f_key if parking.f_key else "") %}
+      <li>
+          <a class="print" sid="{{parking.f_id}}" href="#" data-rel="dialog" data-transition="fade">
+              <img src="{{parking_image }}"/>
+              {% if parking.f_leave_stamp %}<p class="ui-li-aside ui-li-desc"><strong>停:{{ parking.f_parking_stamp.strftime('%Y-%m-%d %H:%M:%S') }}</strong><strong>走:{{ parking.f_leave_stamp.strftime('%Y-%m-%d %H:%M:%S') if parking.f_leave_stamp else "" }} </strong></p>{% endif %}
+              <h3>{{parking.f_parking_name}}</h3>
+              <p>车牌号:{{ parking.f_car_no}}</p>
+          </a>
+          <a href="{{ src_image }}">Image
+</a>
+      </li>
+      {% endfor %}
+  </ul>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+  $("#{{page_id}}").on("pageinit", function() {
+      $(".print").click(function(e) {
+          $.mobile.loading("show");
+          e.preventDefault();
+          var url = "/mobile/checkout_reprint/" +  $(this).attr("sid");
+          
+          $.post(url,null, function(data) {
+              $.mobile.loading("hide");
+              if (data.error == 0) {
+                  BT_printer.print(data.print_content, function() {
+                      BT_printer.close();
+                      //$.mobile.changePage("/mobile/index?u_id=" + data.u_id);
+                  }, utils.showMessageBox);
+              } else
+                  utils.showMessageBox(data.errorMsg);
+          }, "json");
+      });
+  });
+</script>{% endblock %}
+

@@ -1,0 +1,177 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+  $(document).ready(function () {
+        $('#role_grid').jtable({
+            title: '角色列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            selecting: true,
+            actions: {
+                listAction: '/pc/GetRole4jtable'
+                ,deleteAction: '/pc/DeleteRole4jtable'
+                ,updateAction: '/pc/UpdateRole4jtable'
+                ,createAction: '/pc/CreateRole4jtable'
+            }
+            ,toolbar: {
+                hoverAnimation: true 
+                ,hoverAnimationDuration: 60 
+                ,hoverAnimationEasing: undefined 
+                ,items: [{},{
+                    icon: '/static/content/images/ico-add.png'
+                    ,text: '分配权限'
+                    ,click: function () {
+                        //No rows selected
+                        var record = _getSelectedRecord()
+                        if (!record) {
+                            $.jBox.tip("请选择角色记录！");
+                            return false;
+                        }
+                        _initUnitTree();
+                        $("#dialog").dialog("open");
+                    }
+                }]
+            }    
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+                    ,width:'5%'
+                    ,sorting:false
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_name: {
+                    title: '角色名称'
+                    ,width:'8%'
+                    ,sorting:false           
+                    ,inputClass: 'jtable-input-text'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#role_grid').jtable('load', {
+            filter:''
+        });
+
+        $("#dialog").dialog({ autoOpen: false });
+        $("#btnSubmit").click(onSubmit);
+    });
+
+    settings = {
+        view: {
+            dblClickExpand: false,
+            showLine: true,
+            selectedMulti: false,
+            expandSpeed: ($.browser.msie && parseInt($.browser.version) <= 6) ? "" : "fast"
+        },
+        data: {
+            simpleData: {
+                enable: true,
+                idKey: "id",
+                pIdKey: "pid",
+                rootPId: "-1"
+            }
+        },
+        callback: {
+            beforeClick: function (treeId, treeNode) {
+
+            }
+            , onClick: function (event, treeId, treeNode) {
+            }
+        }
+    }
+
+    function _initUnitTree() {
+        var record = _getSelectedRecord();
+        var roleid = record.f_id;
+        $.ajax({
+            type: 'POST'
+            , url: "/pc/getunitztreenodes"//请求的action路径  
+            , data: { roleid: roleid }
+            , failure: function () {//请求失败处理函数  
+                alert('请求失败');
+            }
+            , success: function (data) {
+                var treeNodes = data;
+                var t = $("#unit_tree");
+                var config = $.extend(true, settings, {
+                    check: {
+                        enable: true
+                    }
+                    , callback: {
+                        beforeClick: function (treeId, treeNode) {
+                        }
+                        , onClick: function (event, treeId, treeNode) {
+                        }
+                    }
+                });
+                unittree = $.fn.zTree.init(t, config, treeNodes);
+            }
+        });
+    }
+
+    function onSubmit() {
+        var record = _getSelectedRecord();
+        var roleid = record.f_id;
+        var nodes = unittree.getCheckedNodes(true);
+        var unitids = [];
+        for (var i = 0; i < nodes.length; i++) {
+            unitids.push(nodes[i].id.toString());
+        }
+        if (nodes.length > 0) {
+            $.ajax({
+                type: 'POST'
+                , url: '/pc/saveroleunit'
+                , data: { roleid:roleid, unitids: unitids.join(",") }
+                , success: function (msg) {
+                    var result = msg;
+                    if (result.success) {
+                        $("#dialog").dialog("close");
+                    } else {
+                        jBox.tip(result.msg, 'error');
+                    }
+                }
+                , failure: function () {
+                }
+            });
+        }
+    }
+
+    function _getSelectedRecord() {
+        var $selectedRows = $('#role_grid').jtable('selectedRows');
+        if ($selectedRows.length > 0) {
+            return $($selectedRows[0]).data('record');
+        } else {
+            //No rows selected
+            return null;
+        }
+    }
+ 
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="role_grid">
+</div>
+
+<div id="dialog" title="分配权限" style="display:none">
+    <div id="unit_tree" class="ztree">
+    </div>
+    <a class="btn-lit" id="btnSubmit"><span>确定</span></a>
+</div>
+{% endblock %}

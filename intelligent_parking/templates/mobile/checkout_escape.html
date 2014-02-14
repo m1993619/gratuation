@@ -1,0 +1,99 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "checkoutescape-page" %}
+
+{% block content %}
+<div data-role="content">
+    <ul data-role="listview" data-split-icon="gear" data-filter="true" data-theme="c">
+        {% for parking in parkings %}
+        <li><a href="#" style="padding-top: 0px;padding-bottom: 0px;padding-right: 0px;padding-left: 0px;" >
+            <label style="border-top-width: 0px;margin-top: 0px;border-bottom-width: 0px;margin-bottom: 0px;border-left-width: 0px;border-right-width: 0px;" data-corners="false" >
+                <fieldset data-role="controlgroup" >                                                        
+                    <input class="checkbox" id={{parking.f_id}} type="checkbox" name="checkbox-2b" id="checkbox-2b" data-theme="c" value="{{parking.f_cost[1:-3]}}"/>                    
+                    <label for="checkbox-2b" style="border-top-width: 0px;margin-top: 0px;border-bottom-width: 0px;margin-bottom: 0px;border-left-width: 0px;border-right-width: 0px;">
+                        <label  style="padding:10px 0px 0px 10px;"> 
+                            <h3>{{parking.f_car_no}}   (应缴金额：{{parking.f_cost[1:-3]}}元)</h3>
+                            <p>路段:{{parking.f_street_name}},车位:{{parking.f_parking_code}}号</p>
+                            <p>停:{{parking.f_parking_stamp.strftime("%Y-%m-%d %H:%M:%S")}}，走:{{parking.f_leave_stamp.strftime("%Y-%m-%d %H:%M:%S")}}</p>
+                            <p>停车时长：{{parking.f_range_stamp}}</p>
+                        </label>
+                    </label>
+                </fieldset>
+            </label>
+           </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script type="text/javascript">
+    $("#{{page_id}}").on("pageinit", function() {
+        $("#checkout_escape").click(function(){
+            var checked = false;
+            var ids = [];
+            var cost = 0;
+            // 计算结算总额
+            $(".checkbox").each(function(){
+                if($(this).is(":checked")){
+                    checked = true;
+                    cost += parseInt($(this).val());
+                    ids.push($(this).attr("id")); 
+                }
+            });
+            
+            // 判断是否选中要结算的逃逸记录
+            if(!checked) {
+                utils.showMessageBox("请选择要结算的逃逸记录！");
+                return false;
+            }
+
+            navigator.notification.confirm(
+                '共需缴纳' + cost +  '元费用！',  // message
+                function(button){
+                    if(button==1){
+                        $.mobile.loading("show");
+                        var post_data = {
+                            "ids":ids.join(",")
+                        }
+
+                        var url = "/mobile/checkoutescape"
+                  
+                         $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: post_data,
+                            cache: false,
+                            dataType: "json",
+                            success:function(data){
+                                $.mobile.loading("hide");
+                                if (data.success == "true"){
+                                    $.mobile.changePage("/mobile/main");
+                                     BT_printer.print(data.print_content, function() {
+                                     }, utils.showMessageBox);
+                                } else {
+                                    utils.showMessageBox(data.message);
+                                }
+                            } ,
+                            error:function(error){
+                                utils.showMessageBox("删除失败!");
+                            }
+                        });
+                    } 
+                },              // callback to invoke with index of button pressed
+                '确定要补缴费用吗?',            // title
+                '确定,取消'          // buttonLabels
+            );
+        });
+    });
+</script>
+        {% endblock %}
+{% block footer %}
+<div data-role="footer" data-id="footer" data-position="fixed" data-theme="a">
+    <div data-role="navbar">
+        <ul>
+            <li><a id="checkout_escape" href="#" data-icon="star">逃逸结帐</a></li>
+            <li><a href="/mobile/main" data-icon="home">返回</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

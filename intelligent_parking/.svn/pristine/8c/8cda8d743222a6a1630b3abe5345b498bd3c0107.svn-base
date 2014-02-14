@@ -1,0 +1,10 @@
+
+未驶离车辆交班记录确认单（收费员）
+
+日期:{{ today }}
+收费员:{{ coster_name }}
+路段:{{ street_name }}
+预收总额:{{ act_cost }}元
+未驶离车数:{{ stay_car }}张
+
+

@@ -1,0 +1,46 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "main-page" %}
+{% set parking_image = "/static/content/images/parking.gif" %}
+{% set no_parking_image = "/static/content/images/no-parking.png" %}
+
+
+{% block content %}
+<div data-role="content" id="content">
+    <ul data-role="listview" data-split-icon="gear" data-filter="true" data-split-theme="b">
+        {% for parking in parkings %}
+        {% set url = "/mobile/checkout/" ~ parking.f_id %}
+        <li>
+        <a href="{{url}}">
+            <font color="{{"red" if parking.f_escape_count != 0 else "black"}}">
+            <h1>{{parking.f_car_no}}  <font color="blue">({{parking.f_parking_code}}号)</font></h1>
+            <p>停车时间:{{ parking.f_parking_stamp}}</p>
+            <p>预缴费:{{parking.f_act_cost}}元</p>
+            </font>
+        </a>
+
+        <a href="/mobile/checkinedit/{{parking.f_id}}">修改
+        </a>
+        </li>
+        {% endfor %}
+        {% if not parkings %}
+        <li>
+        <a href="#">
+            <h1>当前没有停入车辆</h1>
+        </a>
+        </li>
+        {%endif%}
+    </ul>
+</div>
+{% endblock %}
+
+{% block footer %}
+<div data-role="footer" data-id="footer" data-position="fixed" data-theme="a">
+    <div data-role="navbar">
+        <ul>
+            <li><a href="/mobile/checkin" data-icon="home">登记</a></li>
+            <li><a href="/mobile/queryparkingrecord_filter" data-icon="gear">结帐</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

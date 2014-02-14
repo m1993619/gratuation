@@ -1,0 +1,21 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "doclist-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+     <ul data-role="listview" data-split-icon="gear" data-split-theme="d">
+      {% for doc in docs %}
+      <li>
+      <a href="/mobile/doc/{{doc.f_id}}">
+              <h3>{{ doc.f_name }}</h3>
+          </a>
+          <a href="/mobile/doc/{{doc.f_id}}">
+          </a>
+      </li>
+      {% endfor %}
+  </ul>
+
+</div>
+{% endblock %}
+

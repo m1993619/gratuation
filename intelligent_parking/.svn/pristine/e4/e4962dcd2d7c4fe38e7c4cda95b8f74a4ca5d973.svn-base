@@ -1,0 +1,47 @@
+#coding=utf-8
+
+from datetime import datetime
+
+
+def createParkingRecordKey():
+    now = datetime.now()
+    return now.strftime("%Y%m%d%H%M%S") + str(now.microsecond).rjust(6, "0")
+
+
+def getActualCost(timedelta, free_minutes=20, fee=3.00):
+    """
+    计算停车费用
+
+    Arguments:
+    - `timedelta`:时长, timedelta对象
+    - `free_minutes`: 免费多长时间, 单位是分钟
+    - `fee`: 每小时费用
+    """
+
+    total_seconds = timedelta.total_seconds()
+
+    print timedelta
+
+    #转换为秒
+    free_minutes = free_minutes * 60
+    hour = 3600
+
+    #免费时间内不收费
+    if total_seconds <= free_minutes:
+        return 0
+
+    cast = fee
+
+    if total_seconds <= hour:
+        return cast
+
+    if total_seconds % hour == 0:
+        cast = (total_seconds // hour) * fee
+    else:
+        cast = (1 + total_seconds // hour) * fee
+
+    return cast
+
+
+if __name__ == '__main__':
+    print getActualCost(datetime.now() - datetime(2013, 7, 16, 11, 0))

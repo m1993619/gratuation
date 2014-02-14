@@ -1,0 +1,49 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "setup-printer-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+  <ul data-role="listview" id="bt-list">
+  </ul>
+</div>
+<li id="template" style="display:none">
+  <a href="#" data-ajax="false">
+    <h3 id="bt-name">正在读取蓝牙设备...</h3>
+    <p id="bt-mac"></p>
+  </a>
+</li>
+<script type="text/javascript">
+  $("#{{page_id}}").on("pageinit", function() {
+      BT_printer.getPairedDevices(function(data) {
+          var item = $("li#template").hide();
+          var ul = $("#bt-list");
+          $.each(data, function(idx, d) {
+              var new_item = item.clone();
+              ul.append(new_item);
+              new_item.show();
+              $("#bt-name", new_item).html(d.device_name);
+              $("#bt-mac", new_item).html(d.mac_address);
+
+              $("a", new_item).click(function(e) {
+                  e.preventDefault();
+                  $.mobile.loading("show");
+                  $(".ui-btn-active", ul).removeClass("ui-btn-active");
+                  new_item.addClass("ui-btn-active");
+                  BT_printer.open(d.mac_address, function() {
+                      utils.showMessageBox("连接成功!")
+                      $.mobile.loading("hide");
+                  }, function(err) {
+                      utils.showMessageBox(err);
+                      $.mobile.loading("hide");
+                  });
+              });
+          });
+          ul.listview("refresh");
+      }, function(error) {
+          utils.showMessageBox(error);
+      });
+
+  });
+</script>
+{% endblock %}

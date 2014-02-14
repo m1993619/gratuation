@@ -1,0 +1,22 @@
+.parking-list {
+    list-style-type: none;
+    padding: 0px;
+    maring: 0px;
+}
+
+.parking-list li {
+    -webkit-box-shadow: 0px 0px 3px #000000;
+    box-shadow: 0px 0px 3px #000000;
+    padding: 5px;
+    margin: 0px;
+    margin-bottom: 20px;
+}
+
+.parking-list li:last {
+    margin-bottom: 0px;
+}
+
+.parking-list a, .parking-list a:visited {
+    TEXT-DECORATION:none;
+    color: #555555;
+}

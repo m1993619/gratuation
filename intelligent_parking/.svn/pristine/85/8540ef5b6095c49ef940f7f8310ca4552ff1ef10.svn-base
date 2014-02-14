@@ -1,0 +1,131 @@
+@charset "utf-8";
+
+/*--- 载入标准样式库 | 设置 --------------------------------------------------------------------------------*/
+@import url(reset.css);
+@import url(fonts.css);
+@import url(grids.css);
+
+/*--- 背景颜色 | 设置 --------------------------------------------------------------------------------*/
+body {
+	padding: 0px;
+	margin: 0px;
+	background-image: url(../images/login/bg.png);
+	background-position: top center;
+	background-repeat: repeat-x;
+	background-color: #017cd4;
+}
+/*--- 自定义宽度 | 设置 --------------------------------------------------------------------------------*/
+#layout {
+	color: #234068;
+	width: 600px;
+	height: 420px;
+	margin-top: 80px;
+	padding: 32px 10px 0px 10px;
+	margin-left: auto;
+	margin-right: auto;
+	background-image: url(../images/login/login.png);
+	background-position: -85px 0px;
+	background-repeat: no-repeat;
+}
+/*--- 链接样式 | 设置 --------------------------------------------------------------------------------*/
+a, a:link, a:visited, a:active {
+	color: #00408b;
+	font-size: 10pt;
+	font-weight: normal;
+	text-decoration: none;
+}
+a:hover {
+	color: #b25400;
+	font-size: 10pt;
+	font-weight: normal;
+	
+}
+/*--- 页面主要模块| 设置 --------------------------------------------------------------------------------*/
+#layout .title {
+	height: 80px;
+	line-height: 80px;
+}
+#layout .cnt {
+	height: 218px;
+}
+#layout .login {
+	width: 600px;
+	margin-top: 30px;
+}
+.login {
+	margin: 0px;
+	padding: 0px;
+}
+.login li {
+	height: 37px;
+	line-height: 37px;
+	list-style:none;
+}
+.login li span {
+	display: inline-block;
+}
+.l-30 {
+	padding-left: 30px;
+}
+.l-90 {
+	padding-left: 80px;
+}
+.l-120 {
+	padding-left: 120px;
+}
+.l-150 {
+	padding-left: 150px;
+}
+.login .name {
+	width: 80px;
+	
+	font-size: 10pt;
+	letter-spacing: 2px;
+}
+.login .radio {
+	width: 90px;
+	letter-spacing: 2px;
+}
+.login .bottom {
+	width: 110px;
+	padding-top: 10px;
+}
+.login .submit {
+	width: 80px;
+	height: 26px;
+}
+.login .login-input {
+	width: 172px;
+	height: 22px;
+	line-height: 22px;
+	
+	padding-left: 2px;
+	padding-right: 2px;
+	border: 1px solid #798ea8;
+}
+.login .login-verification {
+	width: 72px;
+	height: 22px;
+	line-height: 22px;
+	
+	padding-left: 2px;
+	padding-right: 2px;
+	border: 1px solid #798ea8;
+}
+.login li span img {
+	width: 64px;
+	height: 30px;
+	line-height: 37px;
+	margin-left: 10px;
+	margin-right: 10px;
+	vertical-align: middle;
+}
+.login .img {
+	margin-left: 10px;
+	margin-right: 10px;
+	display: inline-block;
+}
+/*--- IE6 补丁 | 设置 --------------------------------------------------------------------------------*/
+* html #layout {
+	background-image: url(../images/login/login.png);
+}

@@ -1,0 +1,27 @@
+Traceback (most recent call last):
+  File "wsgi.py", line 8, in <module>
+    from mobile import mobile_app
+  File "/home/mwl_root/workspace/intelligent_parking/mobile.py", line 7, in <module>
+    import pg
+  File "/home/mwl_root/workspace/intelligent_parking/pg.py", line 30, in <module>
+    connect()
+  File "/home/mwl_root/workspace/intelligent_parking/pg.py", line 28, in connect
+    db.query("set client_encoding to 'UTF-8'")
+  File "/usr/lib/python2.7/site-packages/web/db.py", line 643, in query
+    db_cursor = self._db_cursor()
+  File "/usr/lib/python2.7/site-packages/web/db.py", line 566, in _db_cursor
+    return self.ctx.db.cursor()
+  File "/usr/lib/python2.7/site-packages/web/db.py", line 507, in _getctx
+    self._load_context(self._ctx)
+  File "/usr/lib/python2.7/site-packages/web/db.py", line 518, in _load_context
+    ctx.db = self._connect(self.keywords)
+  File "/usr/lib/python2.7/site-packages/web/db.py", line 960, in _connect
+    conn = DB._connect(self, keywords)
+  File "/usr/lib/python2.7/site-packages/web/db.py", line 546, in _connect
+    return self.db_module.connect(**keywords)
+  File "/usr/lib64/python2.7/site-packages/psycopg2/__init__.py", line 179, in connect
+    connection_factory=connection_factory, async=async)
+psycopg2.OperationalError: could not connect to server: Connection refused
+	Is the server running on host "10.1.1.100" and accepting
+	TCP/IP connections on port 5432?
+

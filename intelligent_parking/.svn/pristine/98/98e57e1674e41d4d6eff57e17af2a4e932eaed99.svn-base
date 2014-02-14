@@ -1,0 +1,150 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "checkin-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+  <h3 class="title">录入车辆信息</h3>
+  <form method="POST" id="checkin-form" action="/mobile/parking/{{ parking_id }}/checkin" data-ajax="false">
+
+    <div data-role="controlgroup">
+    <label for="car_img">车辆照片:</label>
+    <input type="hidden" name="car_img" value="" id="car_img"/>
+    <a href="#" id="take-img"><img src="/static/mobile/images/take_img.png" /></a>
+    </div>
+
+    <div data-role="controlgroup">
+    <label for="car_type">车辆类型:</label>
+    <select id="car_type" name="car_type">
+      <option value="小型轿车" selected="selected">小型轿车</option>
+      <option value="小型货车">小型货车</option>
+      <option value="大型货车">大型货车</option>
+      <option value="执勤车辆">执勤车辆</option>
+      <option value="特殊车辆">特殊车辆</option>
+      <option value="其他">其他</option>
+    </select>
+    </div>
+
+    <div data-role="controlgroup">
+        <lable for="car_no">车牌号:</label>
+        <select name="carfirst" id="carfirst" class="select">
+                  <option value="川">川</option>
+                  <option value="赣">赣</option>
+                  <option value="桂">桂</option>
+                  <option value="甘">甘</option>
+                  <option value="贵">贵</option>
+                  <option value="沪">沪</option>
+                  <option value="黑">黑</option>
+                  <option value="京">京</option>
+                  <option value="津">津</option>
+                  <option value="晋">晋</option>
+                  <option value="辽">辽</option>
+                  <option value="鲁">鲁</option>
+                  <option value="蒙">蒙</option>
+                  <option value="闽">闽</option>
+                  <option value="宁">宁</option>
+                  <option value="青">青</option>
+                  <option value="琼">琼</option>
+                  <option value="苏">苏</option>
+                  <option value="皖">皖</option>
+                  <option value="湘">湘</option>
+                  <option value="新">新</option>
+                  <option value="陕">陕</option>
+                  <option value="渝">渝</option>
+                  <option value="冀">冀</option>
+                  <option value="豫">豫</option>
+                  <option value="云" selected="selected">云</option>
+                  <option value="粤">粤</option>
+                  <option value="浙">浙</option>
+                  <option value="藏">藏</option>
+              </select>
+                <select name="carsecond" id="carsecond" class="select">
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="F" selected="selected">F</option>
+                  <option value="G">G</option>
+                  <option value="H">H</option>
+                  <option value="I">I</option>
+                  <option value="J">J</option>
+                  <option value="K">K</option>
+                  <option value="L">L</option>
+                  <option value="M">M</option>
+                  <option value="N">N</option>
+                  <option value="O">O</option>
+                  <option value="P">P</option>
+                  <option value="Q">Q</option>
+                  <option value="R">R</option>
+                  <option value="S">S</option>
+                  <option value="T">T</option>
+                  <option value="U">U</option>
+                  <option value="V">V</option>
+                  <option value="W">W</option>
+                  <option value="X">X</option>
+                  <option value="Y">Y</option>
+                  <option value="Z" ed="">Z</option>
+        </select>
+
+        <input type="text" name="car_no" value="" id="car_no"/> <br />
+    </div>
+       <br />
+      <input type="submit" value="保存" />
+  </form>
+</div>
+<script type="text/javascript">
+    $("#{{page_id}}").on("pageinit", function() {
+        $('#car_no').keyup(function() {
+            this.value = this.value.toUpperCase();
+        });    
+
+        $("#checkin-form").submit(function(e) {
+            $.mobile.loading("show");
+            e.preventDefault();
+            var url = $(this).attr("action");
+            var post_data = {
+                car_no : $("#car_no").val(),
+                car_type : $("#car_type").val(),
+                car_img : $("#car_img").val()
+            };
+            $.post(url, post_data, function(data) {
+                $.mobile.loading("hide");
+                if (data.error == 0)
+                    BT_printer.print(data.print_content, function() {
+                        $.mobile.changePage("/mobile/index");
+                    }, utils.showMessageBox);
+                else
+                    utils.showMessageBox(data.errorMsg);
+            }, "json");
+        });
+
+        $("#take-img").click(function() {
+            var opts = {
+                quality : 75,
+                destinationType : Camera.DestinationType.DATA_URL,
+                sourceType : Camera.PictureSourceType.CAMERA,
+                allowEdit : false,
+                encodingType: Camera.EncodingType.JPEG,
+                targetWidth: 600,
+                targetHeight: 600,
+                saveToPhotoAlbum: false
+            };
+            
+            navigator.camera.getPicture(onGetPictureDone, onGetPictureError, opts)
+            return false;
+        });
+
+        function onGetPictureDone(img_data)
+        {
+            $("#car_img").val(img_data);
+            $("#take-img img").attr("src", "data:image/jpeg;base64,"+img_data);
+        }
+
+        function onGetPictureError(data)
+        {
+            utils.showMessageBox(data);
+        }
+    });
+</script>
+{% endblock %}

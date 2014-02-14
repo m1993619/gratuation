@@ -1,0 +1,10 @@
+<html>
+    <head>
+    </head>
+    <body>
+      {% for img in images %}
+        <img src="{{ img.f_image }}" class="full-image"/>
+      {% endfor %}
+    </body>
+</html>
+

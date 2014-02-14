@@ -1,0 +1,59 @@
+{% extends "mobile/base.html" %}
+
+{% set page_id = "dailyshift-page" %}
+{% set total_cost = 0 %}
+{% set total_act_cost = 0 %}
+
+{% block content %}
+<div data-role="content" data-theme="b">
+  <h3>未驶离车辆交接班确认单</h3>
+  <table class="report">
+      <tr>
+        <th>日期:</th><td>{{ today }}</td>
+      </tr>
+      <tr>
+        <th>收费员:</th><td>{{ coster_name }}</td>
+      </tr>
+      <tr>
+        <th>路段:</th><td>{{ street_name }}</td>
+      </tr>
+      <tr>
+        <th>预收总额:</th><td>{{ act_cost if act_cost else 0 }}元</td>
+      </tr>
+      <tr>
+        <th>未驶离车数:</th><td>{{ stay_car if stay_car else 0}}张</td>
+      </tr>
+  </table>
+  <p class="print" style="display:None">{{print}}</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $("#{{page_id}}").on("pageinit", function() {
+        $(".report").click(function(){
+            $.post("/mobile/shiftreports", null, function(data) {
+                if (data.success == "true"){
+                    $.mobile.changePage("/mobile/main");
+                } else {
+                    utils.showMessageBox(data.errorMsg);
+                    return false;
+                }
+            }, "json");
+            });
+
+            BT_printer.print($("p.print").text(), function() {}, utils.showMessageBox);
+        });
+</script>
+{% endblock %}
+
+{% block footer %}
+<div data-role="footer" data-id="footer" data-position="fixed" data-theme="a">
+    <div data-role="navbar">
+        <ul>
+            <li><a href="/mobile/shiftreports" data-icon="home">交班统计</a></li>
+            <li><a href="/mobile/shiftdetails" data-icon="gear">车辆明细</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

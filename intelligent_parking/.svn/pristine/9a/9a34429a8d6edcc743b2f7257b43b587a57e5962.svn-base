@@ -1,0 +1,77 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "login-page"%}
+
+{% block content %}
+<div data-role="content" data-theme="b">
+  <form method="POST" id="login-form" action="/mobile/login" data-ajax="false">
+    <p>用户名：
+      <input name="un" id="un" type="text" />
+    </p>
+    <p> 密码：
+       <input name="pw" id="pw" type="number" data-clear-btn="true" pattern="[0-9]*" />
+    </p>
+    <p>
+      <input type="checkbox" name="checkbox" id="checkbox" data-role="none" checked="checked"/>
+      <label for="checkbox">记住帐号</label>
+    </p>
+    <p>
+      <input type="submit" name="button" id="button" value="登录" data-theme="b" />
+    </p>
+  </form>
+</div>
+<script type="text/javascript">
+    $("#{{ page_id }}").on("pageinit", function() {
+      var account = localStorage.getItem('account'); // 访问 username 并把其键值存储在一个变量 username 中
+      if(account){
+          $("#un").val(account);
+      }
+
+      $("#login-form").submit(function() {
+         var url = $(this).attr("action");
+         $.mobile.loading("show");
+         $.post(url, $(this).serialize(), function(data) {
+             $.mobile.loading("hide");
+             if (data.error == 0) {
+                 // 记录到本地存储
+                 if($("#checkbox").prop("checked")){
+                     var account = $("#un").val()
+                     localStorage.setItem('account', account); 
+                 }
+
+                 if(jsinterface && data.units){
+                     jsinterface.setNavigationContent(JSON.stringify(data.units));
+                 }
+ 
+                 if(data.url){
+                     $.mobile.changePage(data.url);
+                     if(jsinterface){
+                         if(data.url.indexOf("main") >= 0){
+                             //显示或者隐藏消息通知按钮
+                             jsinterface.setNotifyVisible(true);
+                         } else {
+                             //显示或者隐藏消息通知按钮
+                             jsinterface.setNotifyVisible(false);
+                         }
+                     }
+
+                 } else {
+                     //$.mobile.changePage("/mobile/index?u_id=" + data.u_id);
+                     $.mobile.changePage("/mobile/main?u_id=" + data.u_id);
+                     if(jsinterface){
+                         //显示或者隐藏消息通知按钮
+                         jsinterface.setNotifyVisible(true);
+                     }
+                 }
+             } else {
+                 utils.showMessageBox(data.errorMsg);
+             }
+         }, "json");
+         return false;
+    }); 
+  });
+</script>
+{% endblock%}
+
+{% block footer %}
+{% endblock %}

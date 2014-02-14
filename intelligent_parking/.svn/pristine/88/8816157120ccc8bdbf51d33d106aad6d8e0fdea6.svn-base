@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="Author" content="kudychen@gmail.com" />
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+    <title>智能停车收费管理系统</title>
+    <link href="/static/admin-template/css/admin.global.css" rel="stylesheet" type="text/css" />
+    <link href="/static/admin-template/css/admin.login.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/static/admin-template/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="/static/admin-template/js/jquery.utils.js"></script>
+    <link href="/static/admin-template/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/static/admin-template/jBox/jquery.jBox-2.3.min.js"></script>
+    <script type="text/javascript" src="/static/admin-template/js/admin.js"></script>
+    <script type="text/javascript">
+        // 初始化下面的变量
+        Admin.IsLoginPage = true;
+        Admin.IndexUrl = '/pc/main';
+        Admin.LoginUrl = '/pc/loginaction';
+        Admin.VerifyImageUrl = '/pc/null';
+    </script>
+</head>
+<body>
+<table class="login" cellpadding="0" cellspacing="0">
+    <!-- top -->
+    <tr>
+        <td class="login_top">
+            <table border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="login_form_pad"></td>
+                    <td class="login_title">智能停车收费管理系统  V1.0</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <!-- middle -->
+    <tr>
+        <td class="login_middle_1"></td>
+    </tr>
+    <tr>
+        <td valign="top" class="login_middle_2">
+            <!-- login form -->
+            <table id="login_form" border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="login_form_pad"></td>
+                    <td class="login_form_label">用&nbsp;&nbsp;&nbsp;&nbsp;户：</td>
+                    <td><input type="text" id="username" class="login_input" value="" size="20" maxlength="20" /></td>
+                </tr>
+                <tr>
+                    <td class="login_form_pad"></td>
+                    <td class="login_form_label">密&nbsp;&nbsp;&nbsp;&nbsp;码：</td>
+                    <td><input type="password" id="password" class="login_input" value="" size="20" maxlength="20" /> <img src="/static/admin-template/images/lock.gif" width="19" height="18" alt="密码" class="middle" /></td>
+                </tr>
+                <tr class="hide">
+                    <td class="login_form_pad"></td>
+                    <td class="login_form_label">验码：</td>
+                    <td><input type="hidden" id="verifycode" class="login_input" value="" size="20" maxlength="4" /></td>
+                </tr>
+                <tr style="display:None;">
+                    <td class="login_form_pad"></td>
+                    <td class="login_form_label"></td>
+                    <td class="hide">
+                    <img id="verify_image" class="middle hide" align="middle" src="/VerifyImage.aspx" width="130" height="53" alt="点击刷新" />&nbsp;&nbsp;
+                    <a id="refresh_verify_image" class="middle" href="javascript:void(0);">换一张</a>
+                    </td>
+                </tr>
+                              <tr>
+                    <td class="login_form_pad"></td>
+                    <td class="login_form_label"></td>
+                    <td><a id="login_btn" class="btn" href="javascript:void(0)" target="_top"><span>登录</span></a></td>
+                </tr>
+                <tr>
+                    <td id="login_auto_height" colspan="3">&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td class="login_middle_3"><div class="login_welcome"></div></td>
+    </tr>
+    <!-- bottom -->
+    <tr>
+        <td class="login-bottom">
+            <table border="0" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="login_form_pad"></td>
+                    <td>Copyright &copy; 2005-2012 All Rights Reserved.</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

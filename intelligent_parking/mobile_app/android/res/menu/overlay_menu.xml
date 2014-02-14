@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item android:id="@+id/message_count"
+        android:icon="@drawable/print_setup"
+        android:title="@string/message"
+        android:showAsAction="always"
+        android:visible="false" />
+  <item android:id="@+id/print_setup"
+    android:icon="@drawable/print_setup"
+    android:title="@string/print_setup"
+    android:showAsAction="collapseActionView"/>
+</menu>

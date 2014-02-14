@@ -1,0 +1,26 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "querycostercount-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+    <ul data-role="listview" data-filter="true">
+        {% for r in result %}
+        <li>
+        <a href="/mobile/details?coster_id={{r.f_coster_id}}">
+            <h1>{{r.f_coster_name}}</h1>
+            <p>停车总数:{{ r.cost_times}}次</p>
+            <p>收费总额:{{ r.act_cost[1:-3]}}元</p>
+        </a>
+        </li>
+        {% endfor %}
+        {% if not result %}
+        <li>
+        <a href="#">
+            <h3>当前没有记录</h3>
+        </a>
+        </li>
+        {%endif%}
+    </ul>
+</div>
+{% endblock %}

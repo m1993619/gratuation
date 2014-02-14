@@ -1,0 +1,62 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+  $(document).ready(function () {
+        $('#region_grid').jtable({
+            title: '区域列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetRegion4jtable'
+                ,deleteAction: '/pc/DeleteRegion4jtable'
+                ,updateAction: '/pc/UpdateRegion4jtable'
+                ,createAction: '/pc/CreateRegion4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,list:false
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_name: {
+                    title: '区域名称'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_street_id: {
+                    title: '所属街道'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options:{% if not streets %} [] {% else %} {{streets}} {% endif %}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+    
+        $('#region_grid').jtable('load');
+    }); 
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="region_grid">
+</div>
+{% endblock %}

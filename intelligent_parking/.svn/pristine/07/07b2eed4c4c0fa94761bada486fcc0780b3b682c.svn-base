@@ -1,0 +1,30 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "msglist-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+     <ul data-role="listview" data-split-icon="gear" data-split-theme="d">
+      {% for m in msgs %}
+      <li>
+      <a href="/mobile/messagedone/{{m.f_id}}" data-transition="fade">
+              <h3>{{m.f_parking_name}}</h3>
+              <p>{{ m.f_content }}-{{ m.f_create_time.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+          </a>
+          <a href="#">Done
+          </a>
+      </li>
+      {% endfor %}
+      {% if not msgs %}
+        <li>
+      <a href="#">
+              <h3>没有任何消息通知</h3>
+          </a>
+      </li>
+
+      {%endif%}
+  </ul>
+
+</div>
+{% endblock %}
+

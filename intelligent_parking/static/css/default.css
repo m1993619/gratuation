@@ -1,0 +1,229 @@
+@charset "utf-8";
+html, body {
+	height: 100%;
+}
+#index-page {
+	position: relative;
+}
+#index-page #content {
+	overflow: hidden;
+	position: absolute;
+	top: 44px;
+	bottom: 40px;
+	left: 0px;
+	right: 0px;
+}
+#id_login_page, #page {
+	background: #2480a6;
+	margin: 0px;
+	padding: 0px;
+}
+#id_body, #page {
+	margin: 0px;
+	padding: 0px;
+}
+#viewer {
+	height: 100%;
+	text-shadow: none;
+	position: relative;
+}
+#loginTitle {
+	font-size: 30px;
+	color: #FFF;
+	text-align: center;
+	padding-top: 10%;
+}
+.loginForm {
+	margin-top: 7.34%;
+	height: 102px;
+	background: #efefef;
+	border: solid 1px #FFF;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-shadow: 3px 3px 3px rgba(0,0,0,0.2), -3px -3px 3px rgba(0,0,0,0.2), 3px -3px 3px rgba(0,0,0,0.2), -3px 3px 3px rgba(0,0,0,0.2);
+	-moz-box-shadow: 3px 3px 3px rgba(0,0,0,0.2), -3px -3px 3px rgba(0,0,0,0.2), 3px -3px 3px rgba(0,0,0,0.2), -3px 3px 3px rgba(0,0,0,0.2);
+	box-shadow: 3px 3px 3px rgba(0,0,0,0.2), -3px -3px 3px rgba(0,0,0,0.2), 3px -3px 3px rgba(0,0,0,0.2), -3px 3px 3px rgba(0,0,0,0.2);
+}
+#form .hr {
+	margin: 0px;
+	padding: 0px;
+	height: 0px;
+	border-top: solid 1px #dddddd;
+	border-bottom: solid 1px #ffffff;
+}
+.in {
+	height: 50px;
+}
+.in img {
+	float: left;
+	margin: 10px 10px 0px 15px;
+}
+.in input {
+	margin: 14px 0px 0px 0px;
+	width: 70%;
+	border: 0px;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	outline: none;
+	height: auto;
+}
+.in .un {
+	background: url(/static/images/UNBg.png) left no-repeat;
+}
+.in .pw {
+	background: url(/static/images/PWBg.png) left no-repeat;
+}
+.in .inputfocus {
+	background: none;
+}
+#keep {
+	margin-top: 3.28%;
+	text-align: right;
+	color: #FFF;
+	font-size: 16px;
+}
+#keep input {
+	border: 0px;
+	background: none;
+}
+#trace {
+	margin-top: 3.28%;
+	height: 16px;
+	padding: 11px 11px 11px 50px;
+	border: 1px;
+}
+#submit {
+	margin-top: 3.28%;
+}
+#submit input[type="button"] {
+	height: 50px;
+	width: 100%;
+	background: url(/static/images/loginSubUp.png) repeat-x top;
+	border: solid 1px #14272f;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	-webkit-box-shadow: 2px 2px 3px rgba(0,0,0,0.2), -2px -2px 3px rgba(0,0,0,0.2), 2px -2px 3px rgba(0,0,0,0.2), -2px 2px 3px rgba(0,0,0,0.2), inset 0px 1px 1px rgba(255,255,255,0.5);
+	-moz-box-shadow: 3px 3px 3px rgba(0,0,0,0.2), -3px -3px 3px rgba(0,0,0,0.2), 3px -3px 3px rgba(0,0,0,0.2), -3px 3px 3px rgba(0,0,0,0.2), inset 0px 1px 1px rgba(255,255,255,0.5);
+	box-shadow: 2px 2px 3px rgba(0,0,0,0.2), -2px -2px 3px rgba(0,0,0,0.2), 2px -2px 3px rgba(0,0,0,0.2), -2px 2px 3px rgba(0,0,0,0.2), inset 0px 1px 1px rgba(255,255,255,0.5);
+	color: #FFF;
+	font-size: 20px;
+	font-family: "微软雅黑", "Microsoft YaHei", verdana, arial;
+	font-weight: bold;
+}
+#submit input[type="button"]:active {
+	background: url(/static/images/loginSubDown.png) repeat-x top;
+	padding-top: 2px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+}
+.err, .warn, .info {
+	font-size: 14px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	display: block;
+}
+.err {
+	color: #b94a48;
+	border: solid 1px #ec92a0;
+	background: #f2dede url(/static/images/ico_err.png) no-repeat 20px 10px;
+}
+.warn {
+	color: #c09853;
+	border: solid 1px #f3ce87;
+	background: #fcf8e3 url(/static/images/ico_warn.png) no-repeat 20px 10px;
+}
+.info {
+	color: #3a87ad;
+	border: solid 1px #93e0f0;
+	background: #d9edf7 url(/static/images/ico_info.png) no-repeat 20px 10px;
+}
+/*home*/
+.itemBox {
+	width: 50%;
+	height: 33.33%;
+	float: left;
+	position: relative;
+}
+.itemContent {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	bottom: 5px;
+	left: 5px;
+}
+.itemTitle {
+	text-align: left;
+	color: #FFF;
+	font-size: 16px;
+	margin: 10px 0px 0px 10px;
+}
+.itemIntro {
+	text-align: left;
+	color: #FFF;
+	font-size: 12px;
+	margin: 10px 0px 0px 10px;
+}
+.itemIcon {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	right: 10px;
+	bottom: 10px;
+	background-origin: content;
+	background-position: 50% 50%;
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+.ico1 {
+	background-image: url(/static/images/nico_1.png);
+}
+.ico2 {
+	background-image: url(/static/images/nico_2.png);
+}
+.ico3 {
+	background-image: url(/static/images/nico_3.png);
+}
+.ico4 {
+	background-image: url(/static/images/nico_4.png);
+}
+.ico5 {
+	background-image: url(/static/images/nico_5.png);
+}
+.ico6 {
+	background-image: url(/static/images/nico_6.png);
+}
+.blue {
+	background: #116577;
+}
+.orange {
+	background: #cc3300;
+}
+.green {
+	background: #25a118;
+}
+.gray {
+	background: #666;
+}
+.itemBox a:active .itemContent {
+	background: rgba(56, 123, 190, 0.7);
+}
+#index-page .ui-content{ padding:0px;}
+a:link {
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: none;
+}
+a:active {
+	text-decoration: none;
+}
+ @media all and (orientation:landscape) {
+}

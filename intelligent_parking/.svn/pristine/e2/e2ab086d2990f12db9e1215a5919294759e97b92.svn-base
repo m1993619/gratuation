@@ -1,0 +1,28 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "index-page" %}
+{% set parking_image = "/static/content/images/no-parking.gif" %}
+{% set no_parking_image = "/static/content/images/no-parking.png" %}
+
+{% block content %}
+<div data-role="content" id="content">
+     <ul data-role="listview" data-split-icon="gear" data-split-theme="d">
+      {% for parking in parkings %}
+      {% set src_image = "/mobile/image/" + (parking.f_key if parking.f_key else "") %}
+      <li>
+          <a href="/mobile/parking/{{ parking.f_id }}/{{ 'checkin' if parking.f_state == 0 else 'checkout'}}">
+              <img src="{{ no_parking_image if parking.f_state == 0 else parking_image }}"/>
+              <h3>{{parking.f_name}}</h3>
+              {% if parking.f_state == 1%}<p class="ui-li-aside ui-li-desc"><strong>{{ parking.f_parking_stamp }}</strong></p>{% endif %}</p>
+
+              {% if parking.f_state == 1%}<p>车牌号:{{ parking.f_car_no}}</p>{% else %}<p>状态：尚未停车 {% endif %}</p>
+          </a>
+          <a href="{% if parking.f_state == 1%}{{ src_image }}{% else %}#{% endif %}">Image
+</a>
+      </li>
+      {% endfor %}
+  </ul>
+
+</div>
+{% endblock %}
+

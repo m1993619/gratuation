@@ -1,0 +1,122 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+  $(document).ready(function () {
+        $('#shift_grid').jtable({
+            title: '班组列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetShift4jtable'
+                ,deleteAction: '/pc/DeleteShift4jtable'
+                ,updateAction: '/pc/UpdateShift4jtable'
+                ,createAction: '/pc/CreateShift4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,list:false
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_name: {
+                    title: '班组名称'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_start: {
+                    title: '上班时间'
+		          ,width:'10%'
+                    ,sorting:false,
+                    inputClass: 'validate[required]'
+                }
+                ,f_end: {
+                    title: '下班时间'
+		            ,width:'10%'
+                    ,sorting:false,
+                    inputClass: 'validate[required]'
+                }
+                ,f_leader_id: {
+                    title: '组长'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options:{% if not users %} [] {% else %} {{users}} {% endif %}
+                }
+                ,f_street_id: {
+                    title: '所属街道'
+		            ,width:'10%'
+		            ,sorting:false
+                      ,options:{% if not streets %} [] {% else %} {{streets}} {% endif %}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+
+        var a = /^(([01]?[0-9])|(2[0-3]))/;
+        var b = /[0-5]?[0-9]$/;
+        var c = /^(([01]?[0-9])|(2[0-3]))\D[0-5]?[0-9]$/;
+        var start = $("#Edit-f_start").val();
+        var end = $("#Edit-f_end").val();
+        if(start =="" || end =="")
+        {
+            return data.form.validationEngine('validate');
+        }
+
+        if (c.test(start) && c.test(end)){
+            s = (c.exec(start).toString()).split(/\D/);
+            e = (c.exec(end).toString()).split(/\D/);
+           document.getElementById("Edit-f_start").value = s[0] + ":" + b.exec(start);
+           document.getElementById("Edit-f_end").value = e[0] + ":" + b.exec(end);
+           return data.form.validationEngine('validate');
+        }
+        if (!c.test(start) && !(c.test(end))) {
+            document.getElementById("Edit-f_start").value = "";
+            document.getElementById("Edit-f_end").value = "";
+            alert("时间格式错误，请使用'00:00'格式!");
+            return data.form.validationEngine('validate');
+        }else{
+        if(c.test(start))
+        {
+            s = (c.exec(start).toString()).split(/\D/);
+            document.getElementById("Edit-f_start").value = s[0] + ":" + b.exec(start);
+            document.getElementById("Edit-f_end").value = "";
+            alert("下班时间格式错误，请使用'00:00'格式!");
+            return data.form.validationEngine('validate');
+        }else if(c.test(end))
+        {
+            e = (c.exec(end).toString()).split(/\D/);
+            document.getElementById("Edit-f_start").value = "";
+            document.getElementById("Edit-f_end").value = e[0] + ":" + b.exec(end);
+            alert("上班时间格式错误，请使用'00:00'格式!");
+        }
+        }
+        return data.form.validationEngine('validate');
+            }
+            ,
+
+            formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+      
+        $('#shift_grid').jtable('load');
+    }); 
+
+    
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="shift_grid">
+</div>
+{% endblock %}

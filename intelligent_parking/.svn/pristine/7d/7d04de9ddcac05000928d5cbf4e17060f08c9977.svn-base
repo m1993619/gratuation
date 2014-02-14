@@ -1,0 +1,203 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+  $(document).ready(function () {
+        $('#device_grid').jtable({
+            title: '设备列表',
+            paging: true,
+            sorting: false,
+            actions: {
+                listAction: '/pc/GetDevice4jtable'
+                ,deleteAction: '/pc/DeleteDevice4jtable'
+                ,updateAction: '/pc/UpdateDevice4jtable'
+                ,createAction: '/pc/CreateDevice4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_name: {
+                    title: '设备名称'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_code: {
+                    title: '设备编号'
+		            ,width:'10%'
+		            ,sorting:false
+                }
+                ,f_connect_device_code: {
+                    title: '关联设备'
+		            ,width:'10%'
+                    ,sorting:false
+                    ,options: {% if not devices %}[]{%else%}{{devices}}{%endif%}
+
+                }
+                ,f_channel: {
+                    title: '信道'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options:["", "00", "01", "02", "03", "04", "05", "06", "07", "08"]
+                }
+                ,f_street_id: {
+                    title: '所属路段'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {% if not streets %}[]{%else%}{{streets}}{%endif%}
+                }
+                ,f_parking_id: {
+                    title: '车位编号'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {% if not parkings %}[]{%else%}{{parkings}}{%endif%}
+                }
+                ,f_owner_id: {
+                    title: '设备持有人'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {% if not users %}[]{%else%}{{users}}{%endif%}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_baud: {
+                    title: '波特率'
+                    ,width:'10%'
+                    ,list:false
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_check: {
+                    title: '检验位'
+                    ,list:false
+                    ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_data: {
+                    title: '数据位'
+                    ,width:'10%'
+                    ,list:false           
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_ip: {
+                    title: 'IP地址'
+                    ,width:'10%'
+                    ,list:false           
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_port: {
+                    title: '端口号'
+                    ,width:'10%'
+                    ,list:false           
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_sim_no: {
+                    title: 'SIM卡号'
+                    ,width:'10%'
+                    ,list:false           
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_domain: {
+                    title: '域名'
+                    ,width:'10%'
+                    ,list:false           
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_remark: {
+                    title: '备注'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_type: {
+                    title: '设备类别'
+		            ,width:'10%'
+		            ,sorting:false 
+                    ,options: {% if not devicetypes %}[]{%else%}{{devicetypes}}{%endif%}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_model: {
+                    title: '设备型号'
+                    ,width:'10%'
+                    ,list:false           
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_factory: {
+                    title: '生产厂家'
+                    ,width:'10%'
+                    ,list:false           
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#btnQuery').click(function (event) {
+             var filter =  $('#filter').val();
+             $('#device_grid').jtable('load', {
+                 filter: filter
+             });
+        });
+
+        $('#device_grid').jtable('load', {
+            filter:''
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="device_grid">
+</div>
+{% endblock %}

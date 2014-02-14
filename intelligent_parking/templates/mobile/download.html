@@ -1,0 +1,59 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "download-1-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+  <h3 class="title">您的客户端需要更新</h3>
+  <p>为了给您提供功能更加强大的软件, 我们进行了升级,您需要重新下载安装新的客户端.</p>
+  <a href="http://192.168.1.119:8000/static/apk/parking2.apk" data-role="button" id="downloadit" data-inset="true" data-ajax="false">点这里下载</a>
+</div>
+
+<div class="progress-bar" style="display:none">
+  <div class="load-bar">
+    <div class="load-bar-inner" style="width:100%"><p>100%</p></div>
+  </div>
+</div>
+<script type="text/javascript" src="/static/webintent.js"></script>
+
+<script type="text/javascript">
+    var downloading = false;
+
+$("#{{ page_id }}").on("pageinit", function() {
+    $("#{{ page_id }} #downloadit").click(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (downloading) return;
+        var $this = $(this), load_bar = $(".load-bar-inner"), bar_text = $(".load-bar-inner > p");
+        var apk_path = "/sdcard/parking.apk";
+        downloading = true;
+        $this.buttonMarkup("disable");
+        load_bar.css("width", "0");
+        bar_text.text("0%");
+        $(".progress-bar").show();
+
+        var ft = new FileTransfer();
+        ft.onprogress = function(progressEvent) {
+            console.log(JSON.stringify(progressEvent));
+            if (progressEvent.lengthComputable) {
+                var p = ((progressEvent.loaded / 2 / progressEvent.total) * 100).toFixed(2);
+                load_bar.css("width", p+"%");
+                bar_text.text(p+"%");
+            }
+        };
+        ft.download($this.attr("href"), apk_path, function() {
+            WebIntent.startActivity({
+                action : WebIntent.ACTION_VIEW,
+                type : "application/vnd.android.package-archive",
+                url : "file://" + apk_path
+            }, $.noop, alert);
+            
+            downloading = false;
+        }, function() {
+            alert("下载失败, 请重试!");
+            downloading = false;
+        }, true);
+    });
+});
+</script>
+{% endblock %}

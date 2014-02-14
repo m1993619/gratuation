@@ -1,0 +1,210 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+    $(document).ready(function () {
+        var options = {
+            timeOnlyTitle: '只显示时间',
+            timeText: '时间',
+            hourText: '时',
+            minuteText: '分',
+            secondText: '秒',
+            currentText: '当前时间',
+            closeText: '关闭',
+            dateFormat: "yy-mm-dd"
+        }
+     
+        $('#start_date').datepicker(options);
+        $('#end_date').datepicker(options);
+
+        $('#start_time').timepicker(options);
+        $('#end_time').timepicker(options);
+    
+        $('#monitorrecord_grid').jtable({
+            title: '地磁检测记录列表',
+            paging: true,
+            sorting: false,
+            actions: {
+                listAction: '/pc/GetMonitorRecordAll4jtable'
+            },
+            toolbar: {
+                hoverAnimation: true,
+                hoverAnimationDuration: 60,
+                hoverAnimationEasing: undefined,
+                items: [{
+                    icon: '/static/content/images/excel.png',
+                    text: '导出',
+                    click: function () {
+                        var param = {};
+                        param.start_date = $("#start_date").val();
+                        param.end_date = $("#end_date").val();
+                        
+                        param.start_time = $("#start_time").val(); 
+                        param.end_time = $("#end_time").val(); 
+                        
+                        param.parking = $("#parking").val();
+
+                        // 新打开一个窗口，导出Excel
+                        window.open("/pc/exportmonitorrecordall?" + $.param(param));
+                    }
+                }]
+            },
+            fields: {
+                f_id: {
+                    key: true,
+                    title:"序号",
+		    width:'3%',
+                    inputClass: 'jtable-input-text'
+                }
+                ,f_data: {
+                    title: '设备数据'
+		    ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_parking_id: {
+                    title: '车位'
+		    ,width:'10%'
+		    ,sorting:false
+                    ,options: {%if not parkings_json %}[] {%else %}{{parkings_json}}{%endif%}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+
+                ,f_device_id: {
+                    title: '设备'
+		    ,width:'10%'
+		    ,sorting:false
+                    ,options: {%if not devices %}[] {%else %}{{devices}}{%endif%}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_stamp: {
+                    title: '创建时间'
+		    ,width:'10%'
+                    ,sorting:false
+                    ,list:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_parking_stamp: {
+                    title: '停入时间'
+		    ,width:'10%'
+		    ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_leave_stamp: {
+                    title: '离开时间'
+		    ,width:'10%'
+		    ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_range: {
+                   title: '停车时长'
+		    ,type:'checkbox'
+                   ,width:'5%' 
+                   ,sorting:false
+                   ,display:function(data){
+                       if(!data.record.f_leave_stamp){
+                           return '';
+                       } else {
+                           var delta = Date.parse(data.record.f_leave_stamp) - Date.parse(data.record.f_parking_stamp);
+                           var minutus = Math.floor(delta/(60*1000));
+                           return minutus  + "分钟"
+                       } 
+                   }
+                }
+                ,f_state: {
+                   title: '车位状态'
+		           ,type:'checkbox'
+                   ,values:{0:'无车',1:'有车'}
+                   ,width:'5%' 
+                   ,sorting:false
+                   ,display:function(data){
+                       return '<input type="checkbox" ' + ((data.record.f_state || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
+                   }
+                }
+                       }
+        });
+
+        $('#btnQuery').click(function (event) {
+
+            var start_date = $("#start_date").val();
+            var end_date = $("#end_date").val();
+
+            var start_time = $("#start_time").val(); 
+            var end_time = $("#end_time").val(); 
+
+            var parking = $("#parking").val(); 
+
+            $('#monitorrecord_grid').jtable('load', {
+                start_date: start_date
+                ,start_time: start_time
+                ,end_date: end_date
+                ,end_time: end_time
+                ,parking: parking
+             });
+        });
+
+        $('#monitorrecord_grid').jtable('load', {
+            start_date: $("#start_date").val()
+            ,start_time: $("#start_time").val()
+            ,end_date: $("#end_date").val()
+            ,end_time: $("#end_time").val()
+            ,parking: ""
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        起始日期：</label>
+                    <input id="start_date" value="{{now}}"/>
+                    <label class="first txt-green">
+                        截止日期：</label>
+                    <input id="end_date" value="{{now}}"/>
+                    
+                    <label class="first txt-green">
+                        起始时间：</label>
+                    <input id="start_time" value="07:00"/>
+                    <label class="first txt-green">
+                        截止时间：</label>
+                    <input id="end_time" value="23:00"/>
+                    
+                    <br/>
+
+                    <label class="first txt-green">
+                        车位：</label>
+                    <select name="parking" id="parking" value="">
+                        <option value="">全部</option> 
+                        {% for s in parkings %}
+                        <option value="{{ s.Value }}">{{ s.DisplayText }}</option>
+                        {% endfor%}
+                    </select>
+                  
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="monitorrecord_grid">
+</div>
+{% endblock %}

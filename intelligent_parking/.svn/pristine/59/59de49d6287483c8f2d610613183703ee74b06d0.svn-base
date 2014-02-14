@@ -1,0 +1,170 @@
+{% extends 'pc/pc.html' %}
+
+{% block header_reference %}
+{% endblock %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+    $(document).ready(function () {
+        $(function() {
+            $( "#datepicker" ).datepicker({dateFormat: "yy-mm-dd" });
+        });
+
+        $('#parkingrecord_grid').jtable({
+            title: '停车收费记录列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetParkingRecord4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_image:{
+                    title:"现场图片"
+                    ,display:function(data){
+                        if(data.record && data.record.f_image){
+                        return '<a href="/pc/image/' + data.record.f_key + '" target="_blank"><image src="' + data.record.f_image + '" width="100" height="100" border="0" /></a>' 
+                            //return '<a href="#" class="screenshot" rel="/pc/loadparkingimage?key=' + data.record.f_key +'" title="' + data.record.f_car_no + '">预览</a>'
+                        } else {
+                            return "<span>空</span>"
+                        }
+                    }
+                }
+                ,f_street_id: {
+                    title: '所属路段'
+                    ,width:'8%'
+                    ,options: {% if not streets %} [] {% else %} {{ streets }} {% endif %}        
+                }
+                ,f_parking_code: {
+                    title: '车位编号'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_key: {
+                    title: '凭证号'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_car_no: {
+                    title: '车牌号'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_parking_stamp: {
+                    title: '停车时间'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_leave_stamp: {
+                    title: '离开时间'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_cost: {
+                    title: '应缴费用'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_act_cost: {
+                    title: '实收费用'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_cost_type: {
+                    title: '缴费类型'
+                    ,width:'8%'
+                    ,options:["","正常缴费","包月","免费","逃逸"]         
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_coster_id: {
+                    title: '收费人'
+                    ,width:'8%'
+                    ,options: {% if not users%} [] {% else %} {{users}} {% endif %}    
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_creater_id: {
+                    title: '登记人'
+                    ,width:'8%' 
+                    ,options: {% if not users%} [] {% else %} {{users}} {% endif %}    
+                    ,inputClass: 'jtable-input-text'
+                }
+            }
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+                });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }
+            ,recordsLoaded:function(event, data){
+                //screenshotPreview();
+            }    
+        });
+
+        $('#btnQuery').click(function (event) {
+             var filter =  $('#filter').val();
+             var datepicker = $("#datepicker").val(); 
+
+             $('#parkingrecord_grid').jtable('load', {
+                 filter: filter
+                 ,datepicker:datepicker
+             });
+        });
+
+        $('#parkingrecord_grid').jtable('load', {
+            filter:''
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+                    <label class="first txt-green">
+                        日期：</label>
+                    <input type="text" name="datepicker" id="datepicker" class="input-small" />
+
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="parkingrecord_grid">
+</div>
+{% endblock %}

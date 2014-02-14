@@ -1,0 +1,148 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+    $(document).ready(function () {
+        $(function() {
+            $( "#datepicker" ).datepicker({dateFormat: "yy-mm-dd" });
+        });
+
+        $('#message_grid').jtable({
+            title: '消息通知列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetMessage4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_content: {
+                    title: '消息内容'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_device_id: {
+                    title: '设备'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {%if not devices %}[] {%else %}{{devices}}{%endif%}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_create_time: {
+                    title: '创建时间'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_done_time: {
+                    title: '处理时间'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_parking_id: {
+                    title: '车位'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {%if not parkings %}[] {%else %}{{parkings}}{%endif%}
+                }
+                ,f_street_id: {
+                    title: '所属路段'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {%if not streets %}[] {%else %}{{streets}}{%endif%}
+                }
+                ,f_is_done: {
+                   title: '是否已处理'
+		           ,type:'checkbox'
+                   ,values:{0:'否',1:'是'}
+                   ,width:'5%' 
+                   ,sorting:false
+                   ,display:function(data){
+                       return '<input type="checkbox" ' + ((data.record.f_is_done || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
+                   }
+                }
+                ,f_done_user_id: {
+                    title: '处理人'
+		            ,width:'10%'
+                    ,sorting:false
+                    ,options: {%if not users %}[] {%else %}{{users}}{%endif%}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#btnQuery').click(function (event) {
+             var filter =  $('#filter').val();
+             var datepicker = $("#datepicker").val(); 
+             $('#message_grid').jtable('load', {
+                 filter: filter
+                 ,datepicker:datepicker
+             });
+        });
+
+        $('#message_grid').jtable('load', {
+            filter:""
+            ,datepicker:""
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+
+                    <label class="first txt-green">
+                        日期：</label>
+                    <input type="text" name="datepicker" id="datepicker" class="input-small" />
+
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="message_grid">
+</div>
+{% endblock %}

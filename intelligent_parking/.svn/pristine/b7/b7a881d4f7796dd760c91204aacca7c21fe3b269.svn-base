@@ -1,0 +1,338 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "checkin-edit-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+    <h3 class="title">修改停车记录</h3>
+    <form method="POST" id="checkin-form" action="/mobile/checkinedit/{{parking_record.f_id}}" data-ajax="false">
+       <div data-role="fieldcontain" class = "ui-hide-label">
+           <label >车辆照片:</label>
+           <img src="/static/images/plus.png" class="take-img" id="img1"  />
+       </div>
+
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
+                <div data-role="fieldcontain" class = "ui-hide-label">
+                    <label >车辆类型:</label>
+                    <select id="car_type" name="car_type">
+                        <option value="小型轿车" selected="selected">小型轿车</option>
+                        <option value="小型货车">小型货车</option>
+                        <option value="大型货车">大型货车</option>
+                        <option value="执勤车辆">执勤车辆</option>
+                        <option value="特殊车辆">特殊车辆</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ui-block-b" style="width:50%">
+                <div data-role = "fieldcontain" class="ui-hide-label">
+                    <label>车辆状况:</label>
+                    <select id="car_state" name="car_state">
+                        <option value="车况良好" selected="selected">车况良好</option>
+                        <option value="轻微擦伤">轻微擦伤</option>
+                        <option value="严重变形">严重变形</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+            </div>                
+        </div>
+        
+        <div class="ui-grid-a">
+            <div class="ui-block-a" style=“width:99%”>
+                <div data-role="fieldcontain" class = "ui-hide-label">
+                    <label >预收金额:</label>
+                    <select id="act_cost" name="act_cost">
+                        <option value="0" >0元</option>  
+                        <option value="3" selected="selected">3元</option>
+                        <option value="5">5元</option>
+                        <option value="10">10元</option>
+                        <option value="20">20元</option>
+                        <option value="50">50元</option>
+                        <option value="100">100元</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ui-block-b" style="width:10%">
+            </div>                
+        </div>
+
+        <div class="ui-grid-a">
+            <div class="ui-block-a" style="width:50%;">
+                <div data-role="fieldcontain" class = "ui-hide-label">
+                    <label>车辆所在省:</label>
+                    <select name="carfirst" id="carfirst" class="select">
+                        <option value="川">川</option>
+                        <option value="赣">赣</option>
+                        <option value="桂">桂</option>
+                        <option value="甘">甘</option>
+                        <option value="贵">贵</option>
+                        <option value="沪">沪</option>
+                        <option value="黑">黑</option>
+                        <option value="京">京</option>
+                        <option value="津">津</option>
+                        <option value="晋">晋</option>
+                        <option value="辽">辽</option>
+                        <option value="鲁">鲁</option>
+                        <option value="蒙">蒙</option>
+                        <option value="闽">闽</option>
+                        <option value="宁">宁</option>
+                        <option value="青">青</option>
+                        <option value="鄂">鄂</option>
+                        <option value="琼">琼</option>
+                        <option value="苏">苏</option>
+                        <option value="皖">皖</option>
+                        <option value="湘">湘</option>
+                        <option value="新">新</option>
+                        <option value="陕">陕</option>
+                        <option value="渝">渝</option>
+                        <option value="冀">冀</option>
+                        <option value="豫">豫</option>
+                        <option value="云" selected="selected">云</option>
+                        <option value="粤">粤</option>
+                        <option value="浙">浙</option>
+                        <option value="藏">藏</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ui-block-b">
+                <div data-role = "fieldcontain" class="ui-hide-label">
+                    <label>车辆所在地:</label>
+
+                    <select name="carsecond" id="carsecond" class="select">
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F" selected="selected">F</option>
+                        <option value="G">G</option>
+                        <option value="H">H</option>
+                        <option value="I">I</option>
+                        <option value="J">J</option>
+                        <option value="K">K</option>
+                        <option value="L">L</option>
+                        <option value="M">M</option>
+                        <option value="N">N</option>
+                        <option value="O">O</option>
+                        <option value="P">P</option>
+                        <option value="Q">Q</option>
+                        <option value="R">R</option>
+                        <option value="S">S</option>
+                        <option value="T">T</option>
+                        <option value="U">U</option>
+                        <option value="V">V</option>
+                        <option value="W">W</option>
+                        <option value="X">X</option>
+                        <option value="Y">Y</option>
+                        <option value="Z" ed="">Z</option>
+                    </select>
+
+                </div>
+            </div>                
+        </div>
+
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
+                <div data-role = "fieldcontain" class="ui-hide-label">
+                    <label>车位编号:</label>
+                    <input name="parking_code" id="parking_code" type="number" data-clear-btn="true" pattern="[0-9]*" value="{{ parking_code if parking_code else ""}}" />
+                </div>
+
+            </div>
+            <div class="ui-block-b" style="width:50%">
+                <div data-role="fieldcontain" class = "ui-hide-label">
+                    <label >车牌号:</label>
+                    <input type="text" name="car_no" value="" id="car_no"/> <br />
+                </div>
+
+            </div>                
+        </div>
+     
+        <input type="submit" value="保存" data-theme="b"/>
+    </form>
+</div>
+<script type="text/javascript">
+    $("#{{page_id}}").on("pageinit", function() {
+        $('#act_cost option[value="{{parking_record.f_act_cost}}"]').attr("selected","selected") ;   
+        $('#carfirst option[value="{{parking_record.f_car_no[0:1]}}"]').attr("selected","selected") ;    
+        $('#carsecond option[value="{{parking_record.f_car_no[1:2]}}"]').attr("selected","selected") ;    
+        
+        $("#act_cost").selectmenu("refresh", true); 
+        $("#carfirst").selectmenu("refresh", true); 
+        $("#carsecond").selectmenu("refresh", true); 
+        
+        $('#parking_code').val('{{parking_record.f_parking_code}}');
+        $("#car_no").val('{{parking_record.f_car_no[3:]}}');
+
+        $('#car_no').keyup(function() {
+            this.value = this.value.toUpperCase();
+        });    
+
+        $("#checkin-form").submit(function(e) {
+            var parking_code = $("#parking_code").val();
+            if (!parking_code){
+                utils.showMessageBox("请输入车位号！");
+                return false;
+            }
+
+            var car_no = $("#car_no").val();
+            if (!car_no){
+                utils.showMessageBox("请输入车牌号！");
+                return false;
+            }
+
+            $.mobile.loading("show");
+            e.preventDefault();
+            var url = $(this).attr("action");
+            var post_data = {
+                act_cost: $("#act_cost").val(),
+                car_no :  $("#carfirst").val() + $("#carsecond").val() + " " + $("#car_no").val(),
+                car_type : $("#car_type").val(),
+                parking_code: $("#parking_code").val()
+            };
+
+            $.post(url, post_data, function(data) {
+                $.mobile.loading("hide");
+                if (data.error == 0){
+                    $.mobile.changePage("/mobile/main");
+                    BT_printer.print(data.print_content, function() {
+                    }, utils.showMessageBox);
+                } else {
+                    utils.showMessageBox(data.errorMsg);
+                }
+            }, "json");
+        });
+        
+        $("#btnDel").click(function(){
+            navigator.notification.confirm(
+                '按确定删除当前停车记录!',  // message
+                function(button){
+                    if(button==1){
+                        $.mobile.loading("show");
+                        var post_data = {
+                            "id":'{{parking_record.f_id}}'
+                        }
+
+                        var url = "/mobile/deleteparkingrecord"
+                  
+                         $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: post_data,
+                            cache: false,
+                            dataType: "json",
+                            success:function(data){
+                                $.mobile.loading("hide");
+                                if (data.success == "true"){
+                                    $.mobile.changePage("/mobile/main");
+                                } else {
+                                    utils.showMessageBox(data.message);
+                                }
+                            } ,
+                            error:function(error){
+                                utils.showMessageBox("删除失败!");
+                            }
+                        });
+
+                    } 
+                },              // callback to invoke with index of button pressed
+                '确定要删除当前记录吗?',            // title
+                '确定,取消'          // buttonLabels
+            );
+      });
+      
+          $(".take-img").click(function() {
+                var id = $(this).attr("id");    
+                var opts = {
+                    quality : 50,
+                    destinationType : Camera.DestinationType.DATA_URL,
+                    sourceType : Camera.PictureSourceType.CAMERA,
+                    allowEdit : false,
+                    encodingType: Camera.EncodingType.JPEG,
+                    targetWidth: 600,
+                    targetHeight: 600,
+                    saveToPhotoAlbum: false,
+                    chunkedMode:false
+                };
+               
+                var opts_file = {
+                    quality : 50,
+                    destinationType : Camera.DestinationType.FILE_URI,
+                    sourceType : Camera.PictureSourceType.CAMERA,
+                    allowEdit : false,
+                    encodingType: Camera.EncodingType.JPEG,
+                    targetWidth: 600,
+                    targetHeight: 600,
+                    saveToPhotoAlbum: false,
+                    chunkedMode:false
+                };
+
+               /* navigator.camera.getPicture(function(img_data){
+                    $.mobile.loading("show");
+
+                    var post_data = {
+                        "key":$("#key").val()
+                        ,"img_data":img_data
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/mobile/uploadimage",
+                        data: post_data,
+                        cache: false,
+                        dataType: "json",
+                        success:function(data){
+                            $.mobile.loading("hide");
+                            if (data.success == "true"){
+                                utils.showMessageBox("上传成功, 路径:" + data.url);
+                                $("#img1").attr("src", data.url);
+                            } else {
+                                utils.showMessageBox(data.message);
+                            }
+                        } ,
+                        error:function(error){
+                            utils.showMessageBox("上传失败!");
+                        }
+                    });
+                }, onGetPictureError, opts);*/
+               navigator.camera.getPicture(uploadPhoto, onGetPictureError, opts_file);
+               return false;
+            });
+
+            function onGetPictureError(data)
+            {
+                utils.showMessageBox(data);
+            }
+
+            function uploadPhoto(imageURI) {
+                    var options = new FileUploadOptions();
+                    options.fileKey="imgFile";
+                    options.fileName=imageURI.substr(imageURI.lastIndexOf('/')+1);
+                    options.mimeType="image/jpeg";
+                    options.chunkedMode = false;
+                    
+                    var params = {};
+                    params.key = $("#key").val();
+                    options.params = params;
+
+                    var ft = new FileTransfer();
+                    ft.upload(imageURI, "http://60.160.152.127:2222/mobile/uploadimagefile", win, fail, options);
+            }
+            
+            function win(r) {
+                var data = eval("(" +  r.response + ")");
+                if (data.success == "true"){
+                    $("#img1").attr("src", data.url);
+                } else {
+                    utils.showMessageBox(data.message);
+                }
+            }
+
+            function fail(error) {
+                utils.showMessageBox("操作失败，稍后请重试！");
+            }
+
+    });
+</script>
+{% endblock %}

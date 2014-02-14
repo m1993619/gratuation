@@ -1,0 +1,254 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+    $(document).ready(function () {
+        $('#user_grid').jtable({
+            title: '用户列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            selecting: true,
+            actions: {
+                listAction: '/pc/GetUser4jtable'
+                ,deleteAction: '/pc/DeleteUser4jtable'
+                ,updateAction: '/pc/UpdateUser4jtable'
+                ,createAction: '/pc/CreateUser4jtable'
+            }
+            ,toolbar: {
+                hoverAnimation: true 
+                ,hoverAnimationDuration: 60 
+                ,hoverAnimationEasing: undefined 
+                ,items: [{},{
+                    icon: '/static/content/images/ico-add.png'
+                    ,text: '分配角色'
+                    ,click: function () {
+                        //No rows selected
+                        var record = _getSelectedRecord()
+                        if (!record) {
+                            $.jBox.tip("请选择用户记录！");
+                            return false;
+                        }
+                        _initRoleTree();
+                        $("#dialog").dialog("open");
+                    }
+                }]
+            }    
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,list:false
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_name: {
+                    title: '用户姓名'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_account: {
+                    title: '帐号'
+		            ,width:'10%'
+                    ,sorting:false
+                    ,create:true
+                    ,edit:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_password: {
+                    title: '密码'
+                    ,width:'10%'
+                    ,type:"password"        
+                    ,sorting:false
+                    ,list:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_phone: {
+                    title: '手机号'
+		            ,width:'10%'
+		            ,sorting:false
+                }
+                ,f_type: {
+                    title: '用户类别'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options:["收费人员","巡查人员","管理人员","公司领导"]
+                }
+                ,f_street_id: {
+                     title: '所属路段'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {% if not streets %}[]{% else %} {{streets}} {%endif%}
+                }
+               ,f_shift_id: {
+                    title: '所属班组'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {% if not shifts %}[]{% else %} {{shifts}} {%endif%}
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#btnQuery').click(function (event) {
+             var filter =  $('#filter').val();
+             $('#user_grid').jtable('load', {
+                 filter: filter
+             });
+        });
+
+        $('#user_grid').jtable('load', {
+            filter:''
+        });
+       
+        $("#dialog").dialog({ autoOpen: false });
+        $("#btnSubmit").click(onSubmit);
+    });
+
+
+    settings = {
+        view: {
+            dblClickExpand: false,
+            showLine: true,
+            selectedMulti: false,
+            expandSpeed: ($.browser.msie && parseInt($.browser.version) <= 6) ? "" : "fast"
+        },
+        data: {
+            simpleData: {
+                enable: true,
+                idKey: "id",
+                pIdKey: "pid",
+                rootPId: ""
+            }
+        },
+        callback: {
+            beforeClick: function (treeId, treeNode) {
+
+            }
+            , onClick: function (event, treeId, treeNode) {
+                $.UserApp.grid.jtable("destroy");
+                $.UserApp._initGrid(treeNode.id);
+            }
+        }
+    }
+
+    function _initRoleTree() {
+        var record = _getSelectedRecord();
+        var userid = record.f_id;
+        $.ajax({
+            type: 'POST'
+            , url: "/pc/getroleztreenodes"//请求的action路径  
+            , data: { userid: userid }
+            , failure: function () {//请求失败处理函数  
+                alert('请求失败');
+            }
+            , success: function (data) {
+                var treeNodes = data;
+                var t = $("#role_tree");
+                var settings = $.extend(true, settings, {
+                    check: {
+                        enable: true
+                    }
+                    , callback: {
+                        beforeClick: function (treeId, treeNode) {
+                        }
+                        , onClick: function (event, treeId, treeNode) {
+                        }
+                    }
+                });
+                roletree = $.fn.zTree.init(t, settings, treeNodes);
+            }
+        });
+    }
+
+    function onSubmit() {
+        var record = _getSelectedRecord();
+        var userid = record.f_id;
+        var nodes = roletree.getCheckedNodes(true);
+        var roleids = [];
+        for (var i = 0; i < nodes.length; i++) {
+            roleids.push(nodes[i].id.toString());
+        }
+        if (nodes.length > 0) {
+            $.ajax({
+                type: 'POST'
+                , url: '/pc/saveuserrole'
+                , data: { userid:userid, roleids: roleids.join(",") }
+                , success: function (msg) {
+                    var result = msg;
+                    if (result.success) {
+                        $("#dialog").dialog("close");
+                    } else {
+                        jBox.tip(result.msg, 'error');
+                    }
+                }
+                , failure: function () {
+                }
+            });
+        }
+    }
+
+    function _getSelectedRecord() {
+        var $selectedRows = $('#user_grid').jtable('selectedRows');
+        if ($selectedRows.length > 0) {
+            return $($selectedRows[0]).data('record');
+        } else {
+            //No rows selected
+            return null;
+        }
+    }
+    
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="user_grid">
+</div>
+
+<div id="dialog" title="分配角色" style="display:none">
+    <div id="role_tree" class="ztree">
+    </div>
+    <a class="btn-lit" id="btnSubmit"><span>确定</span></a>
+</div>
+{% endblock %}

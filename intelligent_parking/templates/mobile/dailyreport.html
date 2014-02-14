@@ -1,0 +1,58 @@
+{% extends "mobile/base.html" %}
+
+{% set page_id = "dailyreport-page" %}
+{% set total_cost = 0 %}
+{% set total_act_cost = 0 %}
+
+{% block content %}
+<div data-role="content" data-theme="b">
+  <table class="report">
+      <tr>
+        <th>日期:</th><td>{{ today }}</td>
+      </tr>
+      <tr>
+        <th>收费员:</th><td>{{ coster_name }}</td>
+      </tr>
+      <tr>
+        <th>路段:</th><td>{{ street_name }}</td>
+      </tr>
+      <tr>
+        <th>收费车次:</th><td>{{ car_count }}</td>
+      </tr>
+      <tr>
+        <th>收费金额</th><td>{{ cost_count }}</td>
+      </tr>
+      <tr>
+        <th>交班未驶离车次</th><td>{{ stay_car }}</td>
+      </tr>
+      <tr>
+        <th>免费车次</th><td>{{ free_car_count }}</td>
+      </tr>
+      <tr>
+        <th>免费时长</th><td>{{ free_car_time_count }}</td>
+      </tr>
+  </table>
+  <p class="print" style="display:None">{{print}}</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $("#{{page_id}}").on("pageinit", function() {
+        $(".report").click(function(){
+              BT_printer.print($("p.print").text(), function() {}, utils.showMessageBox);
+        });
+    });
+</script>
+{% endblock %}
+
+{% block footer %}
+<div data-role="footer" data-id="footer" data-position="fixed" data-theme="a">
+    <div data-role="navbar">
+        <ul>
+            <li><a href="/mobile/reports" data-icon="home">日报统计</a></li>
+            <li><a href="/mobile/details" data-icon="gear">日报明细</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

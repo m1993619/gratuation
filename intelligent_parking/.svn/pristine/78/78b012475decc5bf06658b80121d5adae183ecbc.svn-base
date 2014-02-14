@@ -1,0 +1,11 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "doccontent-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+    <h3>{{doc.f_name}}</h3>
+    <p>{{doc.f_content}}</p>
+</div>
+{% endblock %}
+

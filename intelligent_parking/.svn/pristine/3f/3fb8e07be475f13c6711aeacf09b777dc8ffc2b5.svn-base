@@ -1,0 +1,263 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+    $(document).ready(function () {
+        var options = {
+            timeOnlyTitle: '只显示时间',
+            timeText: '时间',
+            hourText: '时',
+            minuteText: '分',
+            secondText: '秒',
+            currentText: '当前时间',
+            closeText: '关闭',
+            dateFormat: "yy-mm-dd"
+        }
+     
+        $('#start_date').datepicker(options);
+        $('#end_date').datepicker(options);
+
+        $('#start_time').timepicker(options);
+        $('#end_time').timepicker(options);
+
+        $('#parkingrecord_grid').jtable({
+            title: '收费流水明细列表',
+            paging: true,
+            sorting: false,
+            actions: {
+                listAction: '/pc/GetParkingDetailsCount4jtable'
+            }
+            ,toolbar: {
+                hoverAnimation: true 
+                ,hoverAnimationDuration: 60 
+                ,hoverAnimationEasing: undefined 
+                ,items: [{},{
+                    icon: '/static/content/images/excel.png'
+                    ,text: '导出'
+                    ,click: function () {
+                        var start_date = $("#start_date").val();
+                        var end_date = $("#end_date").val();
+
+                        var start_time = $("#start_time").val(); 
+                        var end_time = $("#end_time").val(); 
+
+                        var street = $("#street").val(); 
+                        var coster = $("#coster").val(); 
+                        var cost_type = $("#cost_type").val(); 
+                        var shift = $("#shift").val(); 
+                        var parking_code = $("#parking_code").val(); 
+
+                        var filter = "street=" + street;
+                        filter += "&start_date=" + start_date;
+                        filter += "&end_date=" + end_date;
+                        filter += "&start_time=" + start_time
+                        filter += "&end_time=" + end_time
+                        filter += "&coster=" + coster  
+                        filter += "&cost_type=" + cost_type 
+                        filter += "&shift=" + shift
+                        filter += "&parking_code=" + parking_code 
+
+                        // 新打开一个窗口，导出Excel
+                        window.open("/pc/exportparkingdetailscount?" + filter);
+                        return;
+                    }
+                }] //Array of your custom toolbar items.
+            } 
+            ,fields: {
+                f_date_range: {
+                    title: '统计时间段'
+		            ,width:'15%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_day_range: {
+                    title: '日期'
+		            ,width:'6%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_street_id: {
+                    title: '路段'
+                    ,width:'6%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_coster_id: {
+                    title: '收费员'
+                    ,width:'6%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_shift_id: {
+                    title: '班组'
+                    ,width:'6%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_parking_code: {
+                    title: '车位号'
+                    ,width:'6%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_car_no: {
+                    title: '车牌号'
+                    ,width:'6%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_parking_stamp: {
+                    title: '停车时间'
+                    ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_leave_stamp: {
+                    title: '离开时间'
+                    ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_cost_type: {
+                    title: '收费类型'
+                    ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_cost_range: {
+                    title: '计费时长'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_cost: {
+                    title: '应收'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_act_cost: {
+                    title: '实收'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+            }
+        });
+
+        $('#btnQuery').click(function (event) {
+            var start_date = $("#start_date").val();
+            var end_date = $("#end_date").val();
+
+            var start_time = $("#start_time").val(); 
+            var end_time = $("#end_time").val(); 
+
+            var street = $("#street").val(); 
+            var coster = $("#coster").val(); 
+            var cost_type = $("#cost_type").val(); 
+            var shift = $("#shift").val(); 
+            var parking_code = $("#parking_code").val(); 
+
+            $('#parkingrecord_grid').jtable('load', {
+                start_date: start_date
+                ,start_time: start_time
+                ,end_date: end_date
+                ,end_time: end_time
+                ,street: street
+                ,coster: coster
+                ,cost_type: cost_type
+                ,shift: shift
+                ,parking_code: parking_code
+            });
+        });
+
+        $('#parkingrecord_grid').jtable('load', {
+            start_date: $("#start_date").val()
+            ,start_time: $("#start_time").val()
+            ,end_date: $("#end_date").val()
+            ,end_time: $("#end_time").val()
+            ,street: ""
+            ,coster: ""
+            ,cost_type: ""
+            ,shift: ""
+            ,parking_code: ""
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+ror: invalid literal for int() with base 10: 'undefined'
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        起始日期：</label>
+                    <input id="start_date" value="{{now}}"/>
+                    <label class="first txt-green">
+                        截止日期：</label>
+                    <input id="end_date" value="{{now}}"/>
+                    
+                    <label class="first txt-green">
+                        起始时间：</label>
+                    <input id="start_time" value="00:00"/>
+                    <label class="first txt-green">
+                        截止时间：</label>
+                    <input id="end_time" value="23:59"/>
+                    <br/>   
+
+                    <label class="first txt-green">
+                        路段：</label>
+                    <select name="street" id="street" value="">
+                        <option value="">全部</option> 
+                        {% for s in streets %}
+                        <option value="{{ s.Value }}">{{ s.DisplayText }}</option>
+                        {% endfor%}
+                    </select>
+
+                    <label class="first txt-green">
+                        收费人员：</label>
+                    <select name="coster" id="coster" value="">
+                        <option value="">全部</option> 
+                        {% for s in users %}
+                        <option value="{{ s.Value }}">{{ s.DisplayText }}</option>
+                        {% endfor%}
+                    </select>
+
+                    <label class="first txt-green">
+                        班组：</label>
+                    <select name="shift" id="shift" value="">
+                        <option value="">全部</option> 
+                        {% for s in shifts %}
+                        <option value="{{ s.Value }}">{{ s.DisplayText }}</option>
+                        {% endfor%}
+                    </select>
+
+                    <label class="first txt-green">
+                       收费类型：</label>
+                    <select name="cost_type" id="cost_type" value="">
+                        <option value="" selected="selected">全部</option>
+                        <option value="正常缴费">正常缴费</option>
+                        <option value="包月">包月</option>
+                        <option value="免费车辆">免费车辆</option>
+                        <option value="免费时段">免费时段</option>
+                        <option value="逃逸">逃逸</option>
+                    </select>
+                     
+                    <label class="first txt-green">
+                        车位号：</label>
+                    <input name="parking_code" id="parking_code" value="" />
+
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="parkingrecord_grid">
+</div>
+{% endblock %}

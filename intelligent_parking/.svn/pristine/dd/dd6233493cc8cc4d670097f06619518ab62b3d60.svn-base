@@ -1,0 +1,138 @@
+{% extends 'pc/pc.html' %}
+{% block footer_reference %}
+<script type='text/javascript'>
+  $(document).ready(function () {
+        $('#command_grid').jtable({
+            title: '设备指令列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetCommand4jtable'
+                ,deleteAction: '/pc/DeleteCommand4jtable'
+                ,updateAction: '/pc/UpdateCommand4jtable'
+                ,createAction: '/pc/CreateCommand4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_device_id: {
+                    title: '设备'
+                    ,width:'8%'
+                    ,options:{%if not devices %}[] {%else%}{{devices}}{%endif%}
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_command: {
+                    title: '指令内容'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_type: {
+                    title: '指令类别'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: ["","复位指令"]
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_remark: {
+                    title: '备注'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_is_executed: {
+                   title:'是否已执行'
+                   ,type:'checkbox'
+                   ,values:{0:'否',1:'是'}
+                   ,width:'5%' 
+                   ,sorting:false
+                   ,display:function(data){
+                       return '<input type="checkbox" ' + ((data.record.f_is_executed || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
+                   }
+                }
+                ,f_creater_id: {
+                    title: '创建人'
+                    ,width:'10%'
+                    ,create:false
+                    ,edit:false           
+		            ,sorting:false
+                    ,options: {%if not users%}[]{%else%}{{users}}{% endif %}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_create_time: {
+                    title: '创建时间'
+                    ,width:'10%'
+                    ,create:false
+                    ,edit:false          
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#btnQuery').keydown(function (event) {
+             var filter =  $('#filter').val();
+             $('#command_grid').jtable('load', {
+                 filter: filter
+             });
+        });
+
+        $('#command_grid').jtable('load', {
+            filter:''
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="command_grid">
+</div>
+{% endblock %}

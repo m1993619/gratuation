@@ -1,0 +1,12 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "image-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+    {% for img in images %}
+    <img src="{{ img.f_image }}" class="full-image"/>
+    {% endfor %}
+</div>
+{% endblock %}
+

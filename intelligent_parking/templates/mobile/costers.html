@@ -1,0 +1,24 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "queryparking-page" %}
+{% set image = "/static/content/images/user.png" %}
+
+{% block content %}
+<div data-role="content" id="content">
+      <ul data-role="listview" data-split-icon="gear" data-split-theme="d" data-filter="true">
+      {% for c in costers %}
+      <li>
+      <a href="/mobile/coster_reports?coster_id={{c.f_id}}">
+              <img src="{{ image }}"/>
+              <h1>{{c.f_name}}(手机:{{c.f_phone}})</h1>
+              <p>所在班组:{{ c.f_shift_name }}</p>
+              <p>未确认日报:<strong>{{ c.f_unconfirm }}</strong>天</p>
+          </a>
+          <a href="/mobile/coster_reports?coster_id={{c.f_id}}"> </a>
+      </li>
+      {% endfor %}
+  </ul>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,27 @@
+@charset "utf-8";
+
+/*--- 背景颜色 | 设置 --------------------------------------------------------------------------------*/
+body {
+	padding: 0px;
+	margin: 0px;
+	background-image: url(../images/login2/bg-body.png);
+	background-position: top left;
+	background-repeat: repeat;
+	background-color: transparent;
+}
+
+
+/*--- 整体布局 | 设置 --------------------------------------------------------------------------------*/
+.title{height:30px;color:#e9e9e9;font-size:45pt; text-align:center; vertical-align:middle; margin:50px auto;}
+
+.sign-info{background:url(../images/login2/bg-login-form.png) no-repeat top left; width:330px;height:162px;position:absolute;top:200px;left:50%;margin-left:-165px;padding:0 10px;}
+.field-with-bottom{margin-left:10px;background:url(../images/login2/bg-field-bottom.png) no-repeat center bottom;width:300px;height:54px;}
+.field-no-bottom{margin-left:10px;width:300px;height:54px;}
+input {width:270px;height:54px;border:none;background-color:transparent;color:#715435;}
+
+.ico-name{background:url(../images/login2/ico-account.png) no-repeat center center;padding:10px;width:40px;height:54px;}
+.ico-email{background:url(../images/login2/ico-email.png) no-repeat center center;padding:10px;width:40px;height:54px;}
+.ico-passowrd{background:url(../images/login2/ico-password.png) no-repeat center center;padding:10px;width:40px;height:54px;}
+.dev-line{background:url(../images/login2/bg-line.png) no-repeat center center;width:330px;height:5px;position:absolute;left:50%;top:380px;margin-left:-165px;}
+.btn-sign{background:url(../images/login2/bg-btn-sign-hover.png) no-repeat left top; width:350px;height:72px;position:absolute;left:50%;top:420px;margin-left:-170px;padding-top:15px;text-align:center; vertical-align:middle;font-size:21pt;color:#79a12c;}
+.btn-sign:hover{background:url(../images/login2/bg-btn-sign.png) no-repeat left top;color:#79a12c;}

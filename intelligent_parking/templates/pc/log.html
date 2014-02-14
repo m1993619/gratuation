@@ -1,0 +1,141 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+    $(document).ready(function () {
+        $(function() {
+            $( "#datepicker" ).datepicker({dateFormat: "yy-mm-dd" });
+        });
+
+        $('#log_grid').jtable({
+            title: '日志列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetLog4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_object_id: {
+                    title: '对象ID'
+                    ,width:'8%'
+                    ,list:false
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_object_name: {
+                    title: '对象名称'
+		            ,width:'10%'
+                    ,sorting:false
+                    ,list:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_content: {
+                    title: '日志内容'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_object_state: {
+                    title: '对象状态'
+		            ,width:'10%'
+                    ,sorting:false
+                    ,list:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_loger_id: {
+                    title: '记录人'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {%if not users%}[]{% else %}{{users}}{% endif %}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_log_time: {
+                    title: '日志时间'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_action: {
+                    title: '操作动作'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options:["登录","增加","删除","更新"] {{sys}}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#btnQuery').click(function (event) {
+             var filter =  $('#filter').val();
+             var datepicker = $("#datepicker").val();
+
+             $('#log_grid').jtable('load', {
+                 filter: filter
+                 ,datepicker:datepicker
+             });
+        });
+
+        $('#log_grid').jtable('load', {
+            filter:''
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+
+                    <label class="first txt-green">
+                        时间：</label>
+                    <input type="text" name="datepicker" id="datepicker" class="input-small" />
+
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="log_grid">
+</div>
+{% endblock %}

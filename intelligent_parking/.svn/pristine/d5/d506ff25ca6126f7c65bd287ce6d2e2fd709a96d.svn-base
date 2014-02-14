@@ -1,0 +1,32 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "querycheckrecord-filter-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+    <form method="POST" id="checkin-form" action="/mobile/querycheckrecord">
+    <h3 class="title">巡查违规记录查询</h3>
+    <div data-role="controlgroup">
+        <lable for="street">路段:</label>
+        <select name="street" id="street" class="select">
+            <option value="">全部</option>
+            {% for s in streets %}
+            <option value="{{ s.Value }}">{{ s.DisplayText }}</option>
+            {% endfor%}
+        </select>
+    </div>
+       <div data-role="controlgroup">
+            <lable for="costerid">收费人员:</label>
+        <select name="costerid" id="costerid" class="select">
+            <option value="">全部</option>
+            {% for u in users %}
+            <option value="{{ u.Value }}">{{ u.DisplayText }}</option>
+            {% endfor%}
+        </select>
+    </div>
+
+    <br />
+    <input type="submit" value="查询" />
+</form>
+</div>
+{% endblock %}

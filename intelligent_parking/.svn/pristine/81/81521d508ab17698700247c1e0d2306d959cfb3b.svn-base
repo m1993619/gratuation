@@ -1,0 +1,137 @@
+{% extends 'body.html' %}
+   
+{% block meta %}
+  <meta name="viewport" content="width=device-width,initial-scale=1.0, maximum-scale=1.0, maximum-scale=1.0, user-scalable=no" /> 
+{% endblock %}
+
+{% block css%}
+<link rel="stylesheet" href="/static/jquery.mobile-1.3.2/jquery.mobile-1.3.2.min.css"   type="text/css"/>
+<link rel="stylesheet" href="/static/design/style/default.css?v={{v}}" type="text/css" />
+<!--<link rel="stylesheet" type="text/css" href="/static/keyboard/css/keyboard.css">-->
+
+<style type="text/css">
+/* fixed闪屏 */
+.ui-page {   
+     backface-visibility :  hidden ;   
+     -webkit-backface-visibility :  hidden ;  /* Chrome and Safari */   
+     -moz-backface-visibility :  hidden ;  /* Firefox */   
+ }
+
+.full-image
+{
+    margin:20px;
+    padding:0;
+    width:80% !important;
+    height:80% !important;
+}
+
+.portrait label.error, .landscape label.error {   
+   color: red;   
+   font-size: 16px;    
+   font-weight: normal;   
+   line-height: 1.4;    
+   margin-top: 0.5em;    
+   width: 100%;    
+   float: none; 
+}  
+ 
+ .landscape label.error {   
+   display: inline-block;    
+   margin-left: 22%; 
+ } 
+ 
+.portrait label.error {     
+   margin-left: 0;     
+   display: block; 
+ }   
+ 
+em {      
+  color: red;    
+  font-weight: bold;    
+  padding-right: .25em;  
+}
+
+</style>
+
+<script type="text/javascript" src="/static/jquery-2.0.2.js"></script>
+<script type="text/javascript" src="/static/jquery-migrate-1.2.1.min.js"></script>
+
+<!--<script type='text/javascript' src="/static/keyboard/js/jquery.keyboard.js"></script>
+<script type='text/javascript' src="/static/keyboard/js/jquery.mousewheel.js"></script>
+<script type='text/javascript' src="/static/keyboard/js/jquery.keyboard.extension-typing.js"></script>
+<script type='text/javascript' src="/static/keyboard/js/jquery.keyboard.extension-mobile.js"></script>-->
+   
+<!-- Import Javascript files for validation engine (in Head section of HTML) -->
+<script type="text/javascript" src="/static/jquery-validation/dist/jquery.validate.min.js"></script>
+
+ 
+<script type="text/javascript" src="/static/mobile/app.js?v={{v}}"></script>
+<script type="text/javascript" src="/static/cordova-android.js"></script>
+<script type="text/javascript">
+       MSG_COUNT = 0
+       $(document).bind("mobileinit", function() {
+           (function poll() {
+            setTimeout(function() {
+                $.ajax({
+                    url: "/mobile/getmessagecount"{% set page_id = "login-page"%},
+                    type: "GET",
+                    success: function(data) {
+                        if(jsinterface){
+                            if(data.count != MSG_COUNT) {
+                                MSG_COUNT = data.count;
+                                //更新消息通知按钮上的数字
+                                jsinterface.updateNotifyCount(data.count);
+                            }
+                        }
+
+                        /*if("#msg_count"){
+                            var old = $("#msg_count").text();
+                            if(data[0].count == 0){
+                                $("#msg_count").html("");
+                            } else {
+                                if(old != (data[0].count + "")){
+                                    if($.mobile.activePage.is('#index-page')){
+                                        if(navigator && navigator.notification){
+                                            navigator.notification.beep(1);
+                                            navigator.notification.vibrate(1000);
+                                        }
+                                    }
+                                }
+                                $("#msg_count").html(data[0].count);
+                            }
+                        }*/
+
+                        setTimeout(poll,5000);
+                    },
+                    dataType: "json",
+                    //complete: poll,
+                    timeout: 5000
+                }), 5000
+            });
+        })();
+        $.mobile.listview.prototype.options.filterPlaceholder = "请输入关键字搜索";    
+    });
+</script>
+<script type="text/javascript" src="/static/jquery.mobile-1.3.2/jquery.mobile-1.3.2.js"></script>
+<script type="text/javascript" src="/static/utils.js?v=1367596780.468619"></script>
+<script type="text/javascript" src="/static/bluetoothprinter.js?v=1371398552.540834"></script>
+{% endblock %}
+
+{% block body %}
+<div data-role="page" id="{{ page_id }}" >
+    {% block header%}
+    {% endblock %}
+
+    {% block content %}
+    {% endblock%}
+    
+    {% block footer%}
+    {% endblock %}
+
+    {% block scripts %}
+    {% endblock %}
+</div>
+{% endblock %}
+
+
+

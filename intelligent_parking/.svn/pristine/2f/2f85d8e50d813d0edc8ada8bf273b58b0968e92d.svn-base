@@ -1,0 +1,138 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+  editor_f_content = null;
+
+  $(document).ready(function () {
+        $('#document_grid').jtable({
+            title: '资料列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetDocument4jtable'
+                ,deleteAction: '/pc/DeleteDocument4jtable'
+                ,updateAction: '/pc/UpdateDocument4jtable'
+                ,createAction: '/pc/CreateDocument4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_type: {
+                    title: '资料类别'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {%if not doctypes %}[]{%else%}{{doctypes}}{%endif%}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_name: {
+                    title: '资料名称'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_content: {
+                    title: '资料内容'
+                    ,width:'8%'
+                    ,list:false
+                    ,input:function(data){
+                        var content = "";
+                        if (data.record) {
+                            content = data.record.f_content;
+                        }
+
+                        var input = '<textarea name="f_content" id="Edit_f_content" style="width:700px;height:300px;">' 
+                                    + content 
+                                    + '</textarea>';
+                        return input;
+                    }
+                    ,inputClass: 'jtable-input-textarea'
+                }
+                ,f_uri: {
+                    title: '资料链接网址'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_remark: {
+                    title: '备注'
+                    ,width:'8%'
+                    ,type:"textarea"
+                    ,inputClass: 'jtable-input-text'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+                });
+                if(KindEditor){
+                    editor_f_content = KindEditor.create('#Edit_f_content', {
+                        uploadJson: '/pc/upload4kindeditor',
+                        //fileManagerJson: '/pc/KindEditorFileManager',
+                        allowFileManager: false
+                    });
+                }
+            }
+            ,formSubmitting: function (event, data) {
+                if(typeof(editor_f_content) != "undefined" && editor_f_content.sync){
+                    editor_f_content.sync();
+                }
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#btnQuery').click(function (event) {
+             var filter =  $('#txtFilter').val();
+             $('#document_grid').jtable('load', {
+                 filter: filter
+             });
+        });
+
+        $('#document_grid').jtable('load', {
+            filter:''
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="document_grid">
+</div>
+{% endblock %}

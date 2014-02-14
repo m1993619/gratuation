@@ -1,0 +1,31 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "queryparking-filter-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+    <form method="POST" id="checkin-form" action="/mobile/queryparking">
+    <h3 class="title">车位状态查询</h3>
+    <div data-role="controlgroup">
+        <lable for="street">路段:</label>
+        <select name="street" id="street" class="select">
+            <option value="">全部</option>
+            {% for s in streets %}
+            <option value="{{ s.Value }}">{{ s.DisplayText }}</option>
+            {% endfor%}
+        </select>
+    </div>
+   <div data-role="controlgroup">
+            <lable for="region">区域:</label>
+        <select name="region" id="region" class="select">
+            <option value="">全部</option>
+            {% for r in regions %}
+            <option value="{{ r.Value }}">{{ r.DisplayText }}</option>
+            {% endfor%}
+        </select>
+    </div>
+    <br />
+    <input type="submit" value="查询" />
+</form>
+</div>
+{% endblock %}

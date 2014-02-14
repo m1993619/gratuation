@@ -1,0 +1,125 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+  $(document).ready(function () {
+        $('#unit_grid').jtable({
+            title: '功能列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetUnit4jtable'
+                ,deleteAction: '/pc/DeleteUnit4jtable'
+                ,updateAction: '/pc/UpdateUnit4jtable'
+                ,createAction: '/pc/CreateUnit4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序号"
+		    		,list:false
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_name: {
+                    title: '功能名称'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_type: {
+                    title: '功能类别'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,options: {"System":"系统", "Model":"模块","Func":"功能"}
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+                ,f_uri: {
+                    title: '功能路径'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_parent_id: {
+                    title: '所属模块'
+                    ,width:'8%'
+                    ,options:{% if not models %} [] {% else %} {{ models }} {% endif %}
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_icon: {
+                    title: '图标'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_index: {
+                    title: '排序'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_key: {
+                    title: '关键字'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#btnQuery').click(function (event) {
+             var filter =  $('#filter').val();
+             $('#unit_grid').jtable('load', {
+                 filter: filter
+             });
+        });
+
+        $('#unit_grid').jtable('load', {
+            filter:''
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        关键字：</label>
+                    <input type="text" name="filter" id="filter" class="input-small" />
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="unit_grid">
+</div>
+{% endblock %}

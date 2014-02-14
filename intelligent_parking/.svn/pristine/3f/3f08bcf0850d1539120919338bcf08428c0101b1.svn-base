@@ -1,0 +1,173 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+    $(document).ready(function () {
+        $(function() {
+            $( "#datepicker" ).datepicker({dateFormat: "yy-mm-dd" });
+        });
+
+        $('#reports_grid').jtable({
+            title: '日报结帐查询统计列表',
+            paging: false,
+            sorting: false,
+            actions: {
+                listAction: '/pc/GetReports4jtable'
+            }
+            ,toolbar: {
+                hoverAnimation: true 
+                ,hoverAnimationDuration: 60 
+                ,hoverAnimationEasing: undefined 
+                ,items: [{},{
+                    icon: '/static/content/images/excel.png'
+                    ,text: '导出日报结帐明细'
+                    ,click: function () {
+                        var date_range = $("#date_range").val(); 
+                        var street = $("#street").val(); 
+                        var coster = $("#coster").val(); 
+
+                        var filter = "date_range=" + date_range;
+                        filter += "&street=" + street;
+                        filter += "&coster=" + coster;
+    
+                        // 新打开一个窗口，导出Excel
+                        window.open("/pc/exportreports?" + filter);
+                        return;
+                    }
+                }] //Array of your custom toolbar items.
+            } 
+            ,fields: {
+                f_id: {
+                    title: '序号'
+		            ,width:'8%'
+                }
+                ,f_coster_id: {
+                    title: '收费人员'
+                    ,width:'8%'
+                    ,options: {% if not users %} [] {% else %} {{ users}} {% endif %}        
+                }
+                ,f_report_day: {
+                    title: '日报时间'
+		            ,width:'8%'
+                }
+                ,f_group_leader_id: {
+                    title: '组长'
+                    ,width:'8%'
+                    ,options: {% if not users %} [] {% else %} {{ users}} {% endif %}        
+                }
+                ,f_is_confirm: {
+                    title: '是否已确认'
+                    ,width:'8%'
+                    ,options:["","正常缴费","包月","免费","逃逸"]         
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_cost: {
+                    title: '应缴金额'
+                    ,width:'8%'
+                }
+                ,f_act_cost: {
+                    title: '实缴金额'
+                    ,width:'8%'
+                }
+                ,f_cost_times: {
+                    title: '收费车次'
+                    ,width:'8%'
+                }
+                ,f_free_times: {
+                    title: '免费车次'
+                    ,width:'8%'
+                }
+                ,f_escape_times: {
+                    title: '逃逸车次'
+                    ,width:'8%'
+                }
+                ,f_street_id: {
+                    title: '所属路段'
+                    ,width:'8%'
+                    ,options: {% if not streets%} [] {% else %} {{streets}} {% endif %}        
+                }
+                ,f_confirm_date: {
+                    title: '确认日期'
+                    ,width:'8%'
+                }
+
+            }
+        });
+
+        $('#btnQuery').click(function (event) {
+             var date_range = $("#date_range").val(); 
+             var street = $("#street").val(); 
+             var coster = $("#coster").val(); 
+
+             $('#reports_grid').jtable('load', {
+                 date_range: date_range
+                 ,street: street
+                 ,coster: coster
+             });
+        });
+
+        $('#reports_grid').jtable('load', {
+             date_range: "now"
+             ,street: ""
+             ,coster: ""
+        });
+    }); 
+</script>
+{% endblock %}
+
+{% block search_bar %}
+    <div class="search block">
+        <div class="h">
+            <span class="icon-sprite icon-magnifier"></span>
+            <h3>
+                快速搜索</h3>
+        </div>
+        <div class="tl corner">
+        </div>
+        <div class="tr corner">
+        </div>
+        <div class="bl corner">
+        </div>
+        <div class="br corner">
+        </div>
+        <div class="cnt-wp">
+            <div class="cnt">
+                <div class="search-bar">
+                    <label class="first txt-green">
+                        时间周期：</label>
+                    <select name="date_range" id="date_range" value="">
+                        <option value=""  selected="selected">全部</option>
+                        <option value="now">当天</option>
+                        <option value="week">最近一周</option>
+                        <option value="month">最近一月</option>
+                        <option value="year">最近一年</option>
+                    </select>
+                    <label class="first txt-green">
+                        路段：</label>
+                    <select name="street" id="street" value="">
+                        <option value="">全部</option>
+                        {% for s in streets_nojson %}
+                        <option value="{{ s.Value }}">{{ s.DisplayText }}</option>
+                        {% endfor%}
+                    </select>
+                    <label class="first txt-green">
+                        收费人员：</label>
+                    <select name="coster" id="coster" value="">
+                        <option value="">全部</option>
+                        {% for c in users_nojson %}
+                        <option value="{{ c.Value }}">{{ c.DisplayText }}</option>
+                        {% endfor%}
+                    </select>
+
+                    <label>
+                        <a class="btn-lit btn-middle" id="btnQuery" href="#"><span>搜索</span></a></label>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+<div id="reports_grid">
+</div>
+{% endblock %}

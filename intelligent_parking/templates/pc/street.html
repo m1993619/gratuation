@@ -1,0 +1,60 @@
+{% extends 'pc/pc.html' %}
+
+{% block footer_reference %}
+<script type='text/javascript'>
+  $(document).ready(function () {
+        $('#street_grid').jtable({
+            title: '路段列表',
+            paging: true,
+            sorting: true,
+            defaultSorting: 'f_id DESC',
+            actions: {
+                listAction: '/pc/GetStreet4jtable'
+                ,deleteAction: '/pc/DeleteStreet4jtable'
+                ,updateAction: '/pc/UpdateStreet4jtable'
+                ,createAction: '/pc/CreateStreet4jtable'
+            }
+            ,fields: {
+                f_id: {
+                    key: true
+                    ,title:"序列号"
+		    		,list:false
+		    		,width:'3%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_name: {
+                    title: '路段名称'
+		            ,width:'8%'
+                    ,inputClass: 'jtable-input-text'
+                }
+                ,f_total: {
+                    title: '总车位数'
+		            ,width:'10%'
+		            ,sorting:false
+                    ,inputClass: 'jtable-input-text validate[required]'
+                }
+         	}
+            ,formCreated: function (event, data) {
+		        $(data.form.parent().parent()).css("top","40px");
+                data.form.validationEngine({
+                    promptPosition: "bottomLeft"
+		        });
+            }
+            ,formSubmitting: function (event, data) {
+                return data.form.validationEngine('validate');
+            }
+            ,formClosed: function (event, data) {
+                data.form.validationEngine('hide');
+                data.form.validationEngine('detach');
+            }	
+        });
+
+        $('#street_grid').jtable('load');
+    }); 
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="street_grid">
+</div>
+{% endblock %}

@@ -1,0 +1,172 @@
+{% extends 'mobile/base.html' %}
+
+{% block css %}
+{{ super() }}
+<link rel="stylesheet" href="/static/mobile/css/checkout.css?v=1371232848.01104" type="text/css" media="screen" />
+{% endblock %}
+
+{% set page_id = "checkout-page" %}
+
+{% block content %}
+<div data-role="content" id="content">
+    <h3 class="title">车辆停车结帐</h3>
+    <div class="ui-grid-a">
+        <div class="ui-block-a">
+                <label>车位编号:</label>
+                <span>{{ parking.f_parking_code }}</span>
+        </div>
+        <div class="ui-block-b">
+                      </div>                
+                  </div>
+                  <div>
+                    <label >车辆号码:    </label>
+                <span>{{ parking.f_car_no}}</span>
+            </div>
+    <div class="ui-grid-a">
+        <div class="ui-block-a">
+                <label >停车时间:</label>
+                <span>{{ parking.f_parking_stamp }}</span>
+        </div>
+        <div class="ui-block-b">
+                <label >停车时长:</label>
+                <span>{{ parking.f_time}}</span>
+        </div>                
+    </div>
+    <div class="ui-grid-a">
+        <div class="ui-block-a">
+                <label >街道位置:</label>
+                <span>{{ parking.f_street_name }}</span>
+        </div>
+        <div class="ui-block-b">
+                <label >应收金额:</label>
+                <span>{{ parking.f_cost[0:-2]}}元</span>
+        </div>                
+    </div>
+    <div>----------------------------------------</div>
+    <br/>
+    <form method="POST" id="checkout-form" action="/mobile/checkout/{{ parking.f_id }}" data-ajax="false">
+        <label >逃逸照片:</label>
+        <br/>
+        <img src="/static/images/plus.png" class="take-img" id="img"  />
+        <div class="ui-grid-a">
+            <div class="ui-block-a">
+                <div data-role="fieldcontain" class = "ui-hide-label">
+                    <label>收费类型</label>
+                    <select id="cost-type" name="cost-type">
+                        <option value="正常缴费">正常缴费</option>
+                        <option value="免费时段">免费时段</option>
+                        <option value="免费车辆">免费车辆</option>
+                        <option value="包月">包月</option>
+                        <option value="逃逸">逃逸</option>
+                    </select>
+                </div>
+            </div>
+            <div class="ui-block-b">
+                <div data-role="fieldcontain" class = "ui-hide-label">
+                    <label>实收金额:</label>
+                    <input name="act-cost" id="act-cost" type="number" data-clear-btn="true" pattern="[0-9]*" value="{{ parking.f_cost[0:-2]}}" />
+                </div>
+            </div>                
+        </div>
+        
+        <input type="submit" value="结帐" />
+    </form>
+</div>
+<script type="text/javascript">
+    $("#{{page_id}}").on("pageinit", function() {
+            $("#checkout-form").submit(function(e) {
+                $.mobile.loading("show");
+                e.preventDefault();
+                var url = $(this).attr("action");
+                var post_data = {
+                "act-cost" : $("#act-cost").val(),
+                "cost-type" : $("#cost-type").val()
+                };
+
+                $.post(url, post_data, function(data) {
+                    $.mobile.loading("hide");
+                    if (data.error == 0) {
+                        var cost_type = $("#cost-type").val();
+                        $.mobile.changePage("/mobile/main");
+                        
+                        if (cost_type == "正常缴费"){
+                            BT_printer.print(data.print_content, function() {
+                            }, utils.showMessageBox);
+                        }
+                    } else{
+                        utils.showMessageBox(data.errorMsg);
+                    }
+                }, "json");
+            });
+
+            // 收费类型如果为逃逸，则需要拍照记录
+            $('#cost-type').change(function() {
+                if($(this).val() == "逃逸"){
+                    $('.take-img').bind("click", onImageClick); // Adds another click event
+                    $(".take-img").trigger("click");
+                } else {
+                    $('.take-img').unbind("click"); // Adds another click event
+                }
+
+                // 非正常缴费，则实收金额为0
+                if($(this).val() != "正常缴费"){
+                    $("#act-cost").val(0);
+                }
+            });
+
+
+            function onImageClick(){
+                var opts = {
+                    quality : 50,
+                    destinationType : Camera.DestinationType.DATA_URL,
+                    sourceType : Camera.PictureSourceType.CAMERA,
+                    allowEdit : false,
+                    encodingType: Camera.EncodingType.JPEG,
+                    targetWidth: 600,
+                    targetHeight: 600,
+                    saveToPhotoAlbum: false,
+                    chunkedMode:false
+                };
+
+                navigator.camera.getPicture(onCamera, onGetPictureError, opts);
+                return false;
+            }
+
+            function onCamera(img_data){
+                $.mobile.loading("show");
+
+                var post_data = {
+                    "key":$("#key").val()
+                        ,"img_data":img_data
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/mobile/uploadimage",
+                    data: post_data,
+                    cache: false,
+                    dataType: "json",
+                    success:function(data){
+                        $.mobile.loading("hide");
+                        if (data.success == "true"){
+                            //utils.showMessageBox("上传成功");
+                        } else {
+                            utils.showMessageBox(data.message);
+                        }
+                    } ,
+                    error:function(error){
+                        utils.showMessageBox("上传失败!");
+                    }
+                });
+
+                $("#img").attr("src", "data:image/jpeg;base64," + img_data);
+            }
+
+            function onGetPictureError(data)
+            {
+                utils.showMessageBox(data);
+            }
+    });
+</script>
+{% endblock %}
+

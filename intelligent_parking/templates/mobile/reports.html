@@ -1,0 +1,96 @@
+{% extends 'mobile/base.html' %}
+
+{% set page_id = "coster-reports-page" %}
+
+{% block content %}
+<div data-role="content">
+    <ul data-role="listview" data-split-icon="gear" data-filter="true" data-theme="c">
+        {% for r in reports %}
+        <li><a href="#" style="padding-top: 0px;padding-bottom: 0px;padding-right: 0px;padding-left: 0px;" >
+            <label style="border-top-width: 0px;margin-top: 0px;border-bottom-width: 0px;margin-bottom: 0px;border-left-width: 0px;border-right-width: 0px;" data-corners="false" >
+                <fieldset data-role="controlgroup" >                                                        
+                    <input class="checkbox" id={{r.f_id}} type="checkbox" name="checkbox-2b" id="checkbox-2b" data-theme="c" value="{{r.f_act_cost}}"/>                    
+                    <label for="checkbox-2b" style="border-top-width: 0px;margin-top: 0px;border-bottom-width: 0px;margin-bottom: 0px;border-left-width: 0px;border-right-width: 0px;">
+                        <label  style="padding:10px 0px 0px 10px;"> 
+                            <h3>{{r.f_coster_name}}-{{r.f_report_day}}</h3>
+                            <p>应收总额:{{r.f_cost}}元,实收总额:{{r.f_act_cost}}元</p>
+                            <p>收费车次:{{r.f_cost_times}}，免费车次:{{r.f_free_times}},逃逸车次:{{r.f_escape_times}}</p>
+                        </label>
+                    </label>
+                </fieldset>
+            </label>
+           </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script type="text/javascript">
+    $("#{{page_id}}").on("pageinit", function() {
+        $("#report_confirm").click(function(){
+            var checked = false;
+            var ids = [];
+            var cost = 0;
+            // 计算结算总额
+            $(".checkbox").each(function(){
+                if($(this).is(":checked")){
+                    checked = true;
+                    cost += parseInt($(this).val());
+                    ids.push($(this).attr("id")); 
+                }
+            });
+            
+            // 判断是否选中要结算的日报记录
+            if(!checked) {
+                utils.showMessageBox("请选择要结算的日报记录！");
+                return false;
+            }
+
+            navigator.notification.confirm(
+                '共需上缴' + cost +  '元费用！',  // message
+                function(button){
+                    if(button==1){
+                        $.mobile.loading("show");
+                        var post_data = {
+                            "ids":ids.join(",")
+                        }
+
+                        var url = "/mobile/coster_reports"
+                  
+                         $.ajax({
+                            type: "POST",
+                            url: url,
+                            data: post_data,
+                            cache: false,
+                            dataType: "json",
+                            success:function(data){
+                                $.mobile.loading("hide");
+                                if (data.success == "true"){
+                                    $.mobile.changePage("/mobile/costers");
+                                } else {
+                                    utils.showMessageBox(data.message);
+                                }
+                            } ,
+                            error:function(error){
+                                utils.showMessageBox("操作失败!");
+                            }
+                        });
+                    } 
+                },              // callback to invoke with index of button pressed
+                '确定要上缴费用吗?',            // title
+                '确定,取消'          // buttonLabels
+            );
+        });
+    });
+</script>
+        {% endblock %}
+{% block footer %}
+<div data-role="footer" data-id="footer" data-position="fixed" data-theme="a">
+    <div data-role="navbar">
+        <ul>
+            <li><a id="report_confirm" href="#" data-icon="star">日报确认</a></li>
+            <li><a href="/mobile/costers" data-icon="home">返回</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
