@@ -143,11 +143,14 @@
                     ,create:true
                     ,edit:false
                     ,inputClass: 'jtable-input-text'
+                    ,inputClass: 'jtable-input-text validate[required]'
+
                 }
                 ,f_name: {
                     title: '车位名称'
 		            ,width:'8%'
                     ,inputClass: 'jtable-input-text'
+                    ,inputClass: 'jtable-input-text validate[required]'
                 }
                 ,f_type: {
                     title: '车位类型'
@@ -163,12 +166,6 @@
                     ,options:{% if not streets %} [] {% else %} {{streets}} {% endif %}
                     ,inputClass: 'jtable-input-text validate[required]'
                 }
-                ,f_region_id: {
-                    title: '所属区域'
-                    ,width:'8%'
-                    ,options:{% if not regions %} [] {% else %} {{regions}} {% endif %}
-                    ,inputClass: 'jtable-input-text'
-                }
                 ,f_is_free:{
                    title:'是否免费'
                    ,type:'checkbox'
@@ -177,26 +174,6 @@
                    ,sorting:false
                    ,display:function(data){
                        return '<input type="checkbox" ' + ((data.record.f_is_free || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
-                   }
-                }
-                ,f_is_private:{
-                   title:'是否承包'
-                   ,type:'checkbox'
-                   ,values:{0:'否',1:'是'}
-                   ,width:'5%' 
-                   ,sorting:false
-                           ,display:function(data){
-                               return '<input type="checkbox" ' + ((data.record.f_is_free || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
-                   }
-                }
-                ,f_has_device:{
-                   title:'是否安装地磁'
-                   ,type:'checkbox'
-                   ,values:{0:'否',1:'是'}
-                   ,width:'5%' 
-                   ,sorting:false
-                           ,display:function(data){
-                               return '<input type="checkbox" ' + ((data.record.f_is_free || '0') == '1'?'checked="checked"':'')  +  ' disabled="disabled" />'
                    }
                 }
                 ,f_state:{
